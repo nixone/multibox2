@@ -1,0 +1,31 @@
+{
+	"libraryItem":
+	{
+		"id": 50,
+		"type": "DIRECTORY",
+		"name": "Hnus",
+		"items":
+		[
+			{
+				"id": 51,
+				"type": "MULTIMEDIA",
+				"name": "1"
+			},
+			{
+				"id": 52,
+				"type": "DIRECTORY",
+				"name": "H2"
+			},
+			{
+				"id": 53,
+				"type": "MULTIMEDIA",
+				"name": "Hnu3"
+			},
+			{
+				"id": 54,
+				"type": "DIRECTORY",
+				"name": "Hnu5555s"
+			}
+		]
+	}
+}

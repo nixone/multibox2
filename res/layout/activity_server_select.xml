@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+    <!-- Disconnect notification -->
+    <LinearLayout
+		android:id="@+id/disconnect_notification"
+		android:visibility="gone"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:orientation="horizontal"
+		android:background="@color/warning_background"
+		android:padding="@dimen/fieldset_padding">
+
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/notice_server_disconnect"
+		    android:textColor="@color/text_inverse"
+		    android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+	</LinearLayout>
+    
+    <!-- Content -->
+	<ScrollView
+	    android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_alignParentTop="true"
+		android:background="@color/fieldset_activity_background_color">
+	    
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="@dimen/activity_padding">
+		
+		    <!-- Direct connect form -->
+		    <LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="0"
+				android:orientation="vertical"
+				android:padding="@dimen/fieldset_padding"
+				android:background="@color/fieldset_background_color">
+		
+				<TextView
+					android:id="@+id/title_direct_server_connect"
+					android:text="@string/title_direct_server_connect"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+		
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal">
+		
+					<EditText
+						android:id="@+id/server_address_input_field"
+						android:inputType="textUri"
+						android:imeOptions="actionGo"
+						android:hint="@string/hint_server_address"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:height="@dimen/touch_view_height"/>
+		
+					<Button
+						android:id="@+id/button_server_connect"
+						android:text="@string/action_connect"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="0"
+						android:height="@dimen/touch_view_height"/>
+		
+				</LinearLayout>
+			</LinearLayout>
+		    
+		    <!-- List of last selected servers -->
+		    <LinearLayout
+				android:id="@+id/last_servers_fieldset"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:visibility="gone"
+				android:layout_weight="0"
+				android:background="@color/fieldset_background_color"
+				android:layout_marginTop="@dimen/vertical_spacing"
+				android:padding="@dimen/fieldset_padding">
+		
+				<TextView
+					android:id="@+id/title_last_selected_servers"
+					android:text="@string/title_last_selected_servers"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+		
+				<LinearLayout
+					android:id="@+id/last_servers_list"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:orientation="vertical"/>
+		
+			</LinearLayout>
+		
+		</LinearLayout>
+	</ScrollView>
+</RelativeLayout>

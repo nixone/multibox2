@@ -1,8 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MultiBox 2</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">MultiBox</string>
+    
+    <string name="action_settings">Settings</string>    
+    <string name="action_play">Play</string>
+    <string name="action_pause">Play</string>
+    <string name="action_skip">Skip</string>
+    <string name="action_clean_playlist">Clean playlist</string>
+    
+    <string name="action_connect">Connect</string>
+    
+    <string name="notice_nothing_to_play">Nothing to play</string>
+    <string name="notice_queying_multimedia">Queying %s&#8230;</string>
+    <string name="notice_server_disconnect">Connection to server was lost.</string>
+    
+    <string name="placeholder_multimedia_name">Multimedia Name</string>
+    <string name="placeholder_multimedia_play_info">2:31</string>
+    <string name="placeholder_library_item_name">Multimedia Name</string>
+    <string name="placeholder_server_name">Server Name</string>
+    <string name="placeholder_server_address">Server Address</string>
+    
+    <string name="message_connection_problem">Can\'t communicate with MultiBox server, check your network.</string>
+    
+    <string name="playlist">Playlist</string>
+    <string name="library">Library</string>
+    
+    <string name="title_direct_server_connect">Direct connect</string>
+    <string name="title_last_selected_servers">Last selected servers</string>
+    
+    <string name="hint_server_address">Server address</string>
 
 </resources>

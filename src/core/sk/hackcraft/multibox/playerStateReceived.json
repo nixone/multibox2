@@ -1,0 +1,12 @@
+{
+	"multimedia":
+	{
+		"id": 5,
+		"type": "MULTIMEDIA",
+		"name": "Songus",
+		"length": 23
+	},
+	"playbackPosition": 15,
+	"playing": "true"
+}
+

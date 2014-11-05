@@ -1,0 +1,23 @@
+{
+	"playlist":
+	[
+		{
+			"id": 5,
+			"type": "MULTIMEDIA",
+			"name": "Songus",
+			"length": 23
+		},
+		{
+			"id": 6,
+			"type": "MULTIMEDIA",
+			"name": "Ultra",
+			"length": 20
+		},
+		{
+			"id": 7,
+			"type": "MULTIMEDIA",
+			"name": "GGGGGG",
+			"length": 10
+		}
+	]
+}
