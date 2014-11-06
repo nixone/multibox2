@@ -20,7 +20,7 @@ import sk.hackcraft.util.Log;
 import sk.hackcraft.util.MessageQueue;
 import android.app.Application;
 import android.content.Intent;
-
+ 
 public class MultiBoxApplication extends Application
 {	
 	private MessageQueue eventLoop;
