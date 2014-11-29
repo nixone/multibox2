@@ -6,11 +6,16 @@ import java.io.IOException;
 import java.net.Socket;
 
 import sk.hackcraft.netinterface.message.Message;
+import sk.hackcraft.netinterface.message.MessageFactory;
 import sk.hackcraft.netinterface.message.MessageType;
+import sk.hackcraft.netinterface.message.MessageTypeFactory;
 
 
 public class SocketMessageInterface implements MessageInterface
 {
+	private final MessageTypeFactory messageTypeFactory = new MessageTypeFactory();
+	private final MessageFactory messageFactory = new MessageFactory();
+	
 	private final Socket socket;
 	
 	private final DataInputStream input;
@@ -38,35 +43,14 @@ public class SocketMessageInterface implements MessageInterface
 	@Override
 	public Message waitForMessage() throws IOException
 	{
-		final int typeId = input.readInt();
-		final MessageType type = new MessageType()
-		{
-			@Override
-			public int toTypeId()
-			{
-				return typeId;
-			}
-		};
+		MessageType messageType = messageTypeFactory.createMessageType(input.readInt());
+
+		int messageLength = input.readInt();
 		
-		int length = input.readInt();
-		
-		final byte content[] = new byte[length];
+		byte content[] = new byte[messageLength];
 		input.readFully(content);
 
-		return new Message()
-		{
-			@Override
-			public MessageType getType()
-			{
-				return type;
-			}
-			
-			@Override
-			public byte[] getContent()
-			{
-				return content;
-			}
-		};
+		return messageFactory.createMessage(messageType, content);
 	}
 	
 	@Override
