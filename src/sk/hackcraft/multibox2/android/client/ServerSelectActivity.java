@@ -2,10 +2,10 @@ package sk.hackcraft.multibox2.android.client;
 
 import java.util.List;
 
-import sk.hackcraft.multibox.model.Server;
-import sk.hackcraft.multibox.util.SelectedServersStorage;
-import sk.hackcraft.multibox.util.SelectedServersStorage.ServerEntry;
 import sk.hackcraft.multibox2.android.client.util.ActivityTransitionAnimator;
+import sk.hackcraft.multibox2.model.Server;
+import sk.hackcraft.multibox2.util.SelectedServersStorage;
+import sk.hackcraft.multibox2.util.SelectedServersStorage.ServerEntry;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

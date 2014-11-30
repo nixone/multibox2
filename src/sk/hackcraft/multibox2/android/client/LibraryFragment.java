@@ -3,12 +3,12 @@ package sk.hackcraft.multibox2.android.client;
 import java.util.List;
 import java.util.Stack;
 
-import sk.hackcraft.multibox.model.Library;
-import sk.hackcraft.multibox.model.LibraryItem;
-import sk.hackcraft.multibox.model.LibraryItemType;
-import sk.hackcraft.multibox.model.Playlist;
-import sk.hackcraft.multibox.model.Server;
-import sk.hackcraft.multibox.model.libraryitems.DirectoryItem;
+import sk.hackcraft.multibox2.model.Library;
+import sk.hackcraft.multibox2.model.LibraryItem;
+import sk.hackcraft.multibox2.model.LibraryItemType;
+import sk.hackcraft.multibox2.model.Playlist;
+import sk.hackcraft.multibox2.model.Server;
+import sk.hackcraft.multibox2.model.libraryitems.DirectoryItem;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;

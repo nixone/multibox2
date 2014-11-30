@@ -2,10 +2,10 @@ package sk.hackcraft.multibox2.android.client;
 
 import java.util.Iterator;
 
-import sk.hackcraft.multibox.model.LibraryItem;
-import sk.hackcraft.multibox.model.host.LibraryView;
-import sk.hackcraft.multibox.model.host.Player;
-import sk.hackcraft.multibox.model.host.Song;
+import sk.hackcraft.multibox2.model.LibraryItem;
+import sk.hackcraft.multibox2.model.host.LibraryView;
+import sk.hackcraft.multibox2.model.host.Player;
+import sk.hackcraft.multibox2.model.host.Song;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;

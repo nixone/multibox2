@@ -1,13 +1,11 @@
 package sk.hackcraft.multibox2.android.client;
 
-import sk.hackcraft.multibox.model.host.Player;
-import sk.hackcraft.multibox.model.host.Song;
 import sk.hackcraft.multibox2.android.client.HostService.ProvidingBinder;
+import sk.hackcraft.multibox2.model.host.Player;
+import sk.hackcraft.multibox2.model.host.Song;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -83,10 +81,14 @@ public class TestHostActivity extends Activity
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
 		
+		/*
 		startService(new Intent(this, HostService.class));
 		bindService(new Intent(this, HostService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 		
-		Log.e("ACTIVITY", "Binding to service");
+		Log.e("ACTIVITY", "Binding to service");*/
+		
+		//new NetworkingTestingThread().start();
+		new PlayingTestingThread().start();
 	}
 	
 	@Override

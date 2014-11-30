@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import sk.hackcraft.multibox.util.SelectedServersStorage;
+import sk.hackcraft.multibox2.util.SelectedServersStorage;
 import sk.hackcraft.util.Log;
 import sk.hackcraft.util.MessageQueue;
 import android.content.Context;

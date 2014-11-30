@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import sk.hackcraft.multibox.model.Player;
-import sk.hackcraft.multibox.model.Playlist;
-import sk.hackcraft.multibox.model.Server;
-import sk.hackcraft.multibox.model.libraryitems.MultimediaItem;
+import sk.hackcraft.multibox2.model.Player;
+import sk.hackcraft.multibox2.model.Playlist;
+import sk.hackcraft.multibox2.model.Server;
+import sk.hackcraft.multibox2.model.libraryitems.MultimediaItem;
 import sk.hackcraft.util.Log;
 import android.app.Activity;
 import android.app.Fragment;
