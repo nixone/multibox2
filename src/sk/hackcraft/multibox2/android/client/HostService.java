@@ -3,8 +3,8 @@ package sk.hackcraft.multibox2.android.client;
 import java.io.IOException;
 import java.util.concurrent.ThreadFactory;
 
-import sk.hackcraft.multibox2.model.host.LibraryView;
-import sk.hackcraft.multibox2.model.host.Player;
+import sk.hackcraft.multibox2.android.host.LibraryView;
+import sk.hackcraft.multibox2.android.host.Player;
 import sk.hackcraft.multibox2.net.MessageTypes;
 import sk.hackcraft.multibox2.net.NetworkStandards;
 import sk.hackcraft.multibox2.net.host.Host;

@@ -2,8 +2,8 @@ package sk.hackcraft.multibox2.net.host.handlers;
 
 import java.util.Collection;
 
+import sk.hackcraft.multibox2.android.host.LibraryView;
 import sk.hackcraft.multibox2.model.LibraryItem;
-import sk.hackcraft.multibox2.model.host.LibraryView;
 import sk.hackcraft.multibox2.model.libraryitems.DirectoryItem;
 import sk.hackcraft.multibox2.net.MessageTypes;
 import sk.hackcraft.multibox2.net.host.JsonMessageHandler;

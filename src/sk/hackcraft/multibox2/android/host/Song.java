@@ -1,4 +1,4 @@
-package sk.hackcraft.multibox2.model.host;
+package sk.hackcraft.multibox2.android.host;
 
 import sk.hackcraft.multibox2.model.libraryitems.MultimediaItem;
 
