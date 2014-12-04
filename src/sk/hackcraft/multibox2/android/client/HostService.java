@@ -44,7 +44,7 @@ public class HostService extends Service
 		player.pause();
 		
 		library = new LibraryView();
-		library.refresh(getContentResolver());
+		library.load(getContentResolver());
 		
 		host = new Host(NetworkStandards.SOCKET_PORT);
 		host.setMessageHandler(MessageTypes.ADD_LIBRARY_ITEM_TO_PLAYLIST, new AddLibraryItemToPlaylistHandler(library, player));
