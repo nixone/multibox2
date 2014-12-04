@@ -31,13 +31,15 @@ public abstract class DataStringMessageReceiver<R> implements MessageReceiver
 		
 		DataInputStream input = new DataInputStream(new ByteArrayInputStream(content));
 		
+		
 		int length = input.readInt();
+		
 		byte dataStringBytes[] = new byte[length];
 		
 		input.read(dataStringBytes);
 		
 		String dataString = new String(dataStringBytes, ENCODING);
-
+		
 		final R result = parser.transform(dataString);
 		
 		messageQueue.post(new Runnable()

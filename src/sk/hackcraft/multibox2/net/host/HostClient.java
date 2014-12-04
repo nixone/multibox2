@@ -13,8 +13,6 @@ import sk.hackcraft.netinterface.message.MessageTypeFactory;
 
 public class HostClient
 {
-	static private final String TAG = HostClient.class.getName();
-	
 	private Socket socket;
 	private DataInputStream input;
 	private DataOutputStream output;
@@ -80,8 +78,6 @@ public class HostClient
 		byte[] content = message.getContent();
 		int messageType = message.getType().toTypeId();
 		int messageLength = content.length;
-		
-		Log.d(TAG, "Sending message type "+messageType+" of length "+messageLength+" bytes");
 		
 		output.writeInt(messageType);
 		output.writeInt(messageLength);

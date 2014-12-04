@@ -181,8 +181,7 @@ public class Host
 		}
 	}
 
-	public void setMessageHandler(MessageType messageType,
-			MessageHandler messageHandler)
+	public void setMessageHandler(MessageType messageType, MessageHandler messageHandler)
 	{
 		synchronized (messageHandlers)
 		{

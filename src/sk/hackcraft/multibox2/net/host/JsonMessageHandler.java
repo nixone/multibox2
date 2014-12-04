@@ -1,26 +1,19 @@
 package sk.hackcraft.multibox2.net.host;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import sk.hackcraft.multibox2.net.host.handlers.GetPlayerStateHandler;
 import sk.hackcraft.netinterface.message.Message;
 import sk.hackcraft.netinterface.message.MessageFactory;
 import sk.hackcraft.netinterface.message.MessageType;
 
 public abstract class JsonMessageHandler<TRequest, TResponse> implements MessageHandler
 {
-	private static final Charset ENCODING;
-	
-	static
-	{
-		ENCODING = Charset.forName("UTF-8");
-	}
-	
 	static private String TAG = JsonMessageHandler.class.getName();
 	
 	private Class<TRequest> clasz = null;
@@ -28,6 +21,8 @@ public abstract class JsonMessageHandler<TRequest, TResponse> implements Message
 	private MessageFactory messageFactory = new MessageFactory();
 	
 	private ObjectMapper objectMapper = new ObjectMapper();
+	
+	private StringByteArrayCoder stringByteCoder = new StringByteArrayCoder();
 	
 	public JsonMessageHandler(Class<TRequest> clasz, MessageType responseType) {
 		this.clasz = clasz;
@@ -50,14 +45,13 @@ public abstract class JsonMessageHandler<TRequest, TResponse> implements Message
 			return null;
 		}
 		
-		String requestContentString = new String(requestContentBytes, ENCODING);
-		
-		log("Request: ", requestContentString);
-		
 		TResponse response = null;
 		if(requestContentBytes.length == 0) {
+			log("Request came totally empty");
 			response = handleJson(null);
 		} else {
+			String requestContentString = stringByteCoder.decode(requestContentBytes);
+			
 			TRequest decoded = null;
 			try {
 				decoded = decode(objectMapper, requestContentString);
@@ -81,9 +75,9 @@ public abstract class JsonMessageHandler<TRequest, TResponse> implements Message
 			return null;
 		}
 		
-		log("Response: ", responseContentString);
+		log("Response: "+responseContentString);
 		
-		byte[] responseContentBytes = responseContentString.getBytes(ENCODING);
+		byte[] responseContentBytes = stringByteCoder.encode(responseContentString);
 		
 		return messageFactory.createMessage(responseType, responseContentBytes);
 	}
@@ -98,7 +92,7 @@ public abstract class JsonMessageHandler<TRequest, TResponse> implements Message
 	
 	public abstract TResponse handleJson(TRequest request);
 	
-	private void log(String description, String something) {
-		Log.d(TAG, description+something);
+	private void log(String description) {
+		Log.d(TAG, description);
 	}
 }

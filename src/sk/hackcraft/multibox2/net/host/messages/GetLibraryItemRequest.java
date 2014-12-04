@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class GetLibraryItemRequest
 {
 	@JsonProperty
-	private long itemId;
+	private long itemId = 0L;
 	
 	@JsonIgnore
 	public long getItemId() {

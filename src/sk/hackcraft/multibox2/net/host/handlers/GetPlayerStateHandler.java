@@ -21,7 +21,7 @@ public class GetPlayerStateHandler extends JsonMessageHandler<Empty, GetPlayerSt
 	{
 		return new GetPlayerStateResponse(
 				player.getPlayingSong(), 
-				player.getPlaybackPosition(), 
+				Math.round(player.getPlaybackPosition() / 1000f), 
 				player.isPlaying()
 		);
 	}
