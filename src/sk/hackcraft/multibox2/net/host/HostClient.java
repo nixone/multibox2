@@ -13,7 +13,11 @@ import sk.hackcraft.netinterface.message.MessageTypeFactory;
 
 public class HostClient
 {
+	static private final String TAG = HostClient.class.getName();
+	
 	private Socket socket;
+	private DataInputStream input;
+	private DataOutputStream output;
 	
 	private boolean hasKnownMessageType = false;
 	private int messageTypeId;
@@ -22,12 +26,14 @@ public class HostClient
 	private int completeDataSize = 0;
 	private byte[] readData = null;
 	
-	public HostClient(Socket socket) {
+	public HostClient(Socket socket) throws IOException {
 		this.socket = socket;
+		
+		input = new DataInputStream(socket.getInputStream());
+		output = new DataOutputStream(socket.getOutputStream());
 	}
 	
 	public Message tryToReadMessage(MessageFactory messageFactory, MessageTypeFactory messageTypeFactory) throws IOException {
-		DataInputStream input = new DataInputStream(socket.getInputStream());
 		boolean hasIntegerAvailable = input.available() >= Integer.SIZE / 8;
 		
 		if(!hasKnownMessageType) {
@@ -71,11 +77,14 @@ public class HostClient
 	}
 	
 	public void send(Message message) throws IOException {
-		DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-		
-		output.writeInt(message.getType().toTypeId());
 		byte[] content = message.getContent();
-		output.writeInt(content.length);
+		int messageType = message.getType().toTypeId();
+		int messageLength = content.length;
+		
+		Log.d(TAG, "Sending message type "+messageType+" of length "+messageLength+" bytes");
+		
+		output.writeInt(messageType);
+		output.writeInt(messageLength);
 		output.write(content);
 	}
 	

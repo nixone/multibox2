@@ -18,6 +18,11 @@ public class MessageFactory
 			{
 				return content;
 			}
+			
+			@Override
+			public String toString() {
+				return "Message(length="+content.length+", type="+messageType+", content='"+new String(content)+"')";
+			}
 		};
 	}
 }

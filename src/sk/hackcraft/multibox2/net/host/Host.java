@@ -16,155 +16,193 @@ import sk.hackcraft.netinterface.message.MessageTypeFactory;
 public class Host
 {
 	static private final String TAG = "SocketMessageServer";
-	
+
 	static public final int INACTIVITY_SLEEP_TIME = 100;
-	
-	private class AcceptHandler implements Runnable {
+
+	private class AcceptHandler implements Runnable
+	{
 		@Override
 		public void run()
 		{
-			while(true) {
-				synchronized(Host.this) {
-					if(!running) {
+			while (true)
+			{
+				synchronized (Host.this)
+				{
+					if (!running)
+					{
 						return;
 					}
 				}
-				try {
+				try
+				{
 					HostClient client = new HostClient(serverSocket.accept());
-					
-					synchronized(clients) {
+
+					synchronized (clients)
+					{
 						clients.add(client);
 					}
-				} catch(IOException e) {
+				} catch (IOException e)
+				{
 					Log.w(TAG, "While accepting new connection", e);
 				}
 			}
 		}
-		
+
 	}
-	
-	private class DataHandler implements Runnable {
+
+	private class DataHandler implements Runnable
+	{
 		@Override
 		public void run()
 		{
-			while(true) {
-				synchronized(Host.this) {
-					while(!running) {
+			while (true)
+			{
+				synchronized (Host.this)
+				{
+					while (!running)
+					{
 						return;
 					}
 				}
-				
+
 				HashSet<HostClient> clientsCopy = null;
 				HashSet<HostClient> clientsToBeClosed = new HashSet<HostClient>();
-				
-				synchronized(clients) {
+
+				synchronized (clients)
+				{
 					clientsCopy = new HashSet<HostClient>(clients);
 				}
-				
+
 				boolean readSomething = false;
-				
-				for(HostClient client : clientsCopy) {
-					try {
+
+				for (HostClient client : clientsCopy)
+				{
+					try
+					{
 						Message message = null;
-						
-						while((message = client.tryToReadMessage(messageFactory, messageTypeFactory)) != null) {
+
+						while ((message = client.tryToReadMessage(
+								messageFactory, messageTypeFactory)) != null)
+						{
 							readSomething = true;
 							MessageHandler handler = null;
-							
-							synchronized(messageHandlers) {
-								handler = messageHandlers.get(message.getType().toTypeId());
+
+							synchronized (messageHandlers)
+							{
+								handler = messageHandlers.get(message.getType()
+										.toTypeId());
 							}
-							
-							if(handler == null) {
+
+							if (handler == null)
+							{
 								continue;
 							}
-							
+
 							Message response = handler.handle(message);
-							
-							if(response == null) {
+
+							if (response == null)
+							{
 								continue;
 							}
-							
+
 							client.send(response);
 						}
-					} catch(IOException e) {
+					} catch (IOException e)
+					{
 						clientsToBeClosed.add(client);
-						Log.d(TAG, "Client being disconnected because of data IOException", e);
+						Log.d(TAG,
+								"Client being disconnected because of data IOException",
+								e);
 					}
 				}
-				
-				for(HostClient client : clientsToBeClosed) {
-					try {
-						synchronized(clients) {
+
+				for (HostClient client : clientsToBeClosed)
+				{
+					try
+					{
+						synchronized (clients)
+						{
 							clients.remove(client);
 						}
 						client.tryToClose();
-					} catch(IOException e) {
+					} catch (IOException e)
+					{
 						Log.w(TAG, "IO problem while closing client", e);
 					}
 				}
-				
-				if(!readSomething) {
-					try 
+
+				if (!readSomething)
+				{
+					try
 					{
 						Thread.sleep(INACTIVITY_SLEEP_TIME);
-					} catch(InterruptedException e) {
+					} catch (InterruptedException e)
+					{
 						Log.w(TAG, "Thread interrupted during sleep.", e);
 					}
 				}
 			}
 		}
 	}
-	
+
 	private int port;
 	private boolean running = false;
-	
+
 	private Thread acceptThread = null;
 	private Thread dataThread = null;
-	
+
 	private ServerSocket serverSocket = null;
-	
+
 	private Set<HostClient> clients = new HashSet<HostClient>();
-	
+
 	private HashMap<Integer, MessageHandler> messageHandlers = new HashMap<Integer, MessageHandler>();
-	
+
 	private MessageFactory messageFactory = new MessageFactory();
 	private MessageTypeFactory messageTypeFactory = new MessageTypeFactory();
-	
-	public Host(int port) {
+
+	public Host(int port)
+	{
 		this.port = port;
 	}
-	
-	public void start(ThreadFactory threadFactory) throws IOException {
-		synchronized(this) {
+
+	public void start(ThreadFactory threadFactory) throws IOException
+	{
+		synchronized (this)
+		{
 			serverSocket = new ServerSocket(port);
-			
+
 			acceptThread = threadFactory.newThread(new AcceptHandler());
 			dataThread = threadFactory.newThread(new DataHandler());
-			
+
 			acceptThread.start();
 			dataThread.start();
-			
+
 			running = true;
 		}
 	}
-	
-	public void setMessageHandler(MessageType messageType, MessageHandler messageHandler) {
-		synchronized(messageHandlers) {
+
+	public void setMessageHandler(MessageType messageType,
+			MessageHandler messageHandler)
+	{
+		synchronized (messageHandlers)
+		{
 			messageHandlers.put(messageType.toTypeId(), messageHandler);
 		}
 	}
-	
-	public void stop() {
-		synchronized(this) {
+
+	public void stop()
+	{
+		synchronized (this)
+		{
 			running = false;
 		}
-		try {
+		try
+		{
 			acceptThread.join();
 			dataThread.join();
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e)
+		{
 			return;
 		}
 	}
 }
-

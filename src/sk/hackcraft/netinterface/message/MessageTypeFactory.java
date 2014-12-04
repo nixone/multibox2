@@ -9,6 +9,11 @@ public class MessageTypeFactory
 			{
 				return id;
 			}
+			
+			@Override
+			public String toString() {
+				return "MessageType#"+id;
+			}
 		};
 	}
 }

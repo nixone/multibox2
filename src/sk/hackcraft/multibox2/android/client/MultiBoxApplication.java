@@ -68,8 +68,6 @@ public class MultiBoxApplication extends Application
 			}
 		});
 		
-		//serverInterface = new MockServerInterface(eventLoop);
-		
 		server = new Server(serverInterface, eventLoop, log);
 	}
 	

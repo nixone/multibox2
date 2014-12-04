@@ -2,14 +2,19 @@ package sk.hackcraft.multibox2.android.client;
 
 import java.util.List;
 
+import sk.hackcraft.multibox2.android.client.HostService.ProvidingBinder;
 import sk.hackcraft.multibox2.android.client.util.ActivityTransitionAnimator;
 import sk.hackcraft.multibox2.model.Server;
 import sk.hackcraft.multibox2.util.SelectedServersStorage;
 import sk.hackcraft.multibox2.util.SelectedServersStorage.ServerEntry;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +26,8 @@ import android.widget.TextView;
 
 public class ServerSelectActivity extends Activity
 {
+	static public final String TAG = ServerSelectActivity.class.getName();
+	
 	public static final String EXTRA_KEY_DISCONNECT = "disconnect";
 	
 	public static final String SAVED_STATE_KEY_DISCONNECT_NOTIFICATION = "disconnectNotification";
@@ -32,6 +39,8 @@ public class ServerSelectActivity extends Activity
 	private View disconnectNotification;
 
 	private SelectedServersStorage lastServersStorage;
+	
+	private HostServiceConnection hostServiceConnection = new HostServiceConnection();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -94,6 +103,15 @@ public class ServerSelectActivity extends Activity
 				onManualConnectRequested();
 			}
 		});
+		
+		createAndConnectHostService();
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		
+		disconnectHostService();
 	}
 	
 	@Override
@@ -155,6 +173,21 @@ public class ServerSelectActivity extends Activity
 
 		boolean showDisconnectNotification = disconnectNotification.getVisibility() == View.VISIBLE; 
 		outState.putBoolean(SAVED_STATE_KEY_DISCONNECT_NOTIFICATION, showDisconnectNotification);
+	}
+
+	private void createAndConnectHostService() {
+		Log.e(TAG, "Starting and connecting the host service...");
+		startService(new Intent(this, HostService.class));
+		bindService(new Intent(this, HostService.class), hostServiceConnection, Context.BIND_AUTO_CREATE);
+	}
+	
+	private void disconnectHostService() {
+		Log.e(TAG, "Disconnecting host service");
+		if(hostServiceConnection.serviceBound) {
+			hostServiceConnection.service.getPlayer().pause();
+			hostServiceConnection.serviceBound = false;
+			unbindService(hostServiceConnection);
+		}
 	}
 	
 	private void createLastServersList(List<ServerEntry> servers)
@@ -232,5 +265,24 @@ public class ServerSelectActivity extends Activity
 		
 		startActivity(intent);
 		ActivityTransitionAnimator.runStartActivityAnimation(this);
+	}
+	
+	public class HostServiceConnection implements ServiceConnection {
+		private boolean serviceBound = false;
+		private HostService service = null;
+		
+		@Override
+		public void onServiceConnected(ComponentName arg0, IBinder arg1)
+		{
+			serviceBound = true;
+			service = ((ProvidingBinder)arg1).getService();
+			service.getPlayer().play();
+		}
+		
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			serviceBound = false;
+			service = null;
+		}
 	}
 }

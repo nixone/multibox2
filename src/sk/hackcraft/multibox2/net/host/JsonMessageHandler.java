@@ -1,6 +1,7 @@
 package sk.hackcraft.multibox2.net.host;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import android.util.Log;
 
@@ -13,6 +14,13 @@ import sk.hackcraft.netinterface.message.MessageType;
 
 public abstract class JsonMessageHandler<TRequest, TResponse> implements MessageHandler
 {
+	private static final Charset ENCODING;
+	
+	static
+	{
+		ENCODING = Charset.forName("UTF-8");
+	}
+	
 	static private String TAG = JsonMessageHandler.class.getName();
 	
 	private Class<TRequest> clasz = null;
@@ -31,22 +39,28 @@ public abstract class JsonMessageHandler<TRequest, TResponse> implements Message
 	@Override
 	public Message handle(Message request)
 	{
-		byte[] requestContent = null;
+		Log.d(TAG, this.getClass().getName()+" handling the message");
+		
+		byte[] requestContentBytes = null;
 		
 		try {
-			requestContent = request.getContent();
+			requestContentBytes = request.getContent();
 		} catch(IOException e) {
 			Log.e(TAG, "IOException while reading message content", e);
 			return null;
 		}
 		
+		String requestContentString = new String(requestContentBytes, ENCODING);
+		
+		log("Request: ", requestContentString);
+		
 		TResponse response = null;
-		if(requestContent.length == 0) {
+		if(requestContentBytes.length == 0) {
 			response = handleJson(null);
 		} else {
 			TRequest decoded = null;
 			try {
-				decoded = decode(objectMapper, requestContent);
+				decoded = decode(objectMapper, requestContentString);
 			} catch(Exception e) {
 				Log.e(TAG, "Exception during response json mapping", e);
 				return null;
@@ -59,24 +73,32 @@ public abstract class JsonMessageHandler<TRequest, TResponse> implements Message
 			return null;
 		}
 		
-		byte[] responseContent = null;
+		String responseContentString = null;
 		try {
-			responseContent = encode(objectMapper, response);
+			responseContentString = encode(objectMapper, response);
 		} catch(Exception e) {
 			Log.e(TAG, "Exception during request json mapping", e);
 			return null;
 		}
 		
-		return messageFactory.createMessage(responseType, responseContent);
+		log("Response: ", responseContentString);
+		
+		byte[] responseContentBytes = responseContentString.getBytes(ENCODING);
+		
+		return messageFactory.createMessage(responseType, responseContentBytes);
 	}
 	
-	public byte[] encode(ObjectMapper mapper, TResponse response) throws Exception {
-		return objectMapper.writeValueAsBytes(response);
+	public String encode(ObjectMapper mapper, TResponse response) throws Exception {
+		return objectMapper.writeValueAsString(response);
 	}
 	
-	public TRequest decode(ObjectMapper mapper, byte[] request) throws Exception  {
+	public TRequest decode(ObjectMapper mapper, String request) throws Exception  {
 		return objectMapper.readValue(request, clasz);
 	}
 	
 	public abstract TResponse handleJson(TRequest request);
+	
+	private void log(String description, String something) {
+		Log.d(TAG, description+something);
+	}
 }

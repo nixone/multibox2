@@ -1,12 +1,14 @@
 package sk.hackcraft.multibox2.net.host.messages;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sk.hackcraft.multibox2.model.LibraryItem;
 
 public class GetLibraryItemResponse
 {
-	protected LibraryItem libraryItem;
+	@JsonProperty
+	private LibraryItem libraryItem;
 	
 	public GetLibraryItemResponse(LibraryItem libraryItem) {
 		this.libraryItem = libraryItem;
