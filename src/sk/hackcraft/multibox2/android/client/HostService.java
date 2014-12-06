@@ -51,7 +51,7 @@ public class HostService extends Service
 		host.setMessageHandler(MessageTypes.GET_LIBRARY_ITEM, new GetLibraryItemHandler(library));
 		host.setMessageHandler(MessageTypes.GET_PLAYER_STATE, new GetPlayerStateHandler(player));
 		host.setMessageHandler(MessageTypes.GET_PLAYLIST, new GetPlaylistHandler(player));
-		host.setMessageHandler(MessageTypes.GET_SERVER_INFO, new GetServerInfoHandler("Local player"));
+		host.setMessageHandler(MessageTypes.GET_SERVER_INFO, new GetServerInfoHandler(android.os.Build.MODEL));
 		host.setMessageHandler(MessageTypes.PING, new PingHandler());
 		
 		try {

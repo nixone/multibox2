@@ -8,10 +8,12 @@ import java.util.Set;
 import java.util.concurrent.ThreadFactory;
 
 import android.util.Log;
+import sk.hackcraft.multibox2.net.NetworkStandards;
 import sk.hackcraft.netinterface.message.Message;
 import sk.hackcraft.netinterface.message.MessageFactory;
 import sk.hackcraft.netinterface.message.MessageType;
 import sk.hackcraft.netinterface.message.MessageTypeFactory;
+import sk.nixone.discovery.Receiver;
 
 public class Host
 {
@@ -159,6 +161,8 @@ public class Host
 
 	private MessageFactory messageFactory = new MessageFactory();
 	private MessageTypeFactory messageTypeFactory = new MessageTypeFactory();
+	
+	private Receiver discoveryReceiver = null;
 
 	public Host(int port)
 	{
@@ -167,6 +171,9 @@ public class Host
 
 	public void start(ThreadFactory threadFactory) throws IOException
 	{
+		discoveryReceiver = new Receiver(NetworkStandards.DISCOVERY_PROTOCOL);
+		discoveryReceiver.start(threadFactory);
+		
 		synchronized (this)
 		{
 			serverSocket = new ServerSocket(port);
@@ -195,6 +202,11 @@ public class Host
 		{
 			running = false;
 		}
+		if(discoveryReceiver != null) {
+			discoveryReceiver.stop();
+			discoveryReceiver = null;
+		}
+		
 		try
 		{
 			acceptThread.join();

@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.net.Socket;
 
 import sk.hackcraft.multibox2.android.client.util.HandlerEventLoop;
+import sk.hackcraft.multibox2.android.client.util.HostDiscovery.DiscoveryListener;
 import sk.hackcraft.multibox2.android.client.util.JsonCacheSelectedServersStorage;
+import sk.hackcraft.multibox2.android.client.util.MockHostDiscovery;
+import sk.hackcraft.multibox2.android.client.util.ServerBroadcastHostDiscovery;
 import sk.hackcraft.multibox2.android.client.util.SystemLog;
 import sk.hackcraft.multibox2.model.Server;
 import sk.hackcraft.multibox2.net.AutoManagingAsynchronousSocketInterface;
@@ -69,6 +72,10 @@ public class MultiBoxApplication extends Application
 		});
 		
 		server = new Server(serverInterface, eventLoop, log);
+	}
+	
+	public void requestServerDiscovery(DiscoveryListener discoveryListener) {
+		new ServerBroadcastHostDiscovery().start(discoveryListener);
 	}
 	
 	public void destroyServerConnection()

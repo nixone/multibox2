@@ -4,6 +4,7 @@ import java.util.List;
 
 import sk.hackcraft.multibox2.android.client.HostService.ProvidingBinder;
 import sk.hackcraft.multibox2.android.client.util.ActivityTransitionAnimator;
+import sk.hackcraft.multibox2.android.client.util.HostDiscovery.DiscoveryListener;
 import sk.hackcraft.multibox2.model.Server;
 import sk.hackcraft.multibox2.util.SelectedServersStorage;
 import sk.hackcraft.multibox2.util.SelectedServersStorage.ServerEntry;
@@ -36,6 +37,7 @@ public class ServerSelectActivity extends Activity
 	
 	private EditText serverAddressInputField;
 	private LinearLayout lastServersList;
+	private LinearLayout discoveredServersList;
 	private View disconnectNotification;
 
 	private SelectedServersStorage lastServersStorage;
@@ -72,6 +74,7 @@ public class ServerSelectActivity extends Activity
 		disconnectNotification = findViewById(R.id.disconnect_notification);
 		
 		lastServersList = (LinearLayout)findViewById(R.id.last_servers_list);
+		discoveredServersList = (LinearLayout)findViewById(R.id.discovered_servers_list);
 
 		lastServersStorage = application.getSelectedServersStorage();
 		
@@ -116,13 +119,39 @@ public class ServerSelectActivity extends Activity
 	
 	@Override
 	protected void onResume()
-	{
+	{		
 		super.onResume();
 		
 		if (application.hasActiveConnection())
 		{
 			application.destroyServerConnection();
 		}
+		
+		View discoveredServersFieldset = findViewById(R.id.discovered_servers_fieldset);
+		discoveredServersFieldset.setVisibility(View.GONE);
+		discoveredServersList.removeAllViews();
+		((MultiBoxApplication)getApplication()).requestServerDiscovery(new DiscoveryListener()
+		{
+			@Override
+			public void onStarted() {
+			}
+			
+			@Override
+			public void onHostFound(final String address, final String name)
+			{
+				runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						createDiscoveredServerView(address, name);
+					}
+				});
+			}
+			
+			@Override
+			public void onEnded() { }
+		});
 		
 		lastServersStorage.requestServersList(new SelectedServersStorage.ServersListListener()
 		{
@@ -190,6 +219,32 @@ public class ServerSelectActivity extends Activity
 		}
 	}
 	
+	private void createDiscoveredServerView(final String serverAddress, final String serverName) {
+		View discoveredServersFieldset = findViewById(R.id.discovered_servers_fieldset);
+		discoveredServersFieldset.setVisibility(View.VISIBLE);
+		
+		LayoutInflater viewInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
+		View serverItemView = viewInflater.inflate(R.layout.item_server, null);
+		
+		TextView serverNameView = (TextView)serverItemView.findViewById(R.id.server_name_view);
+		TextView serverAddressView = (TextView)serverItemView.findViewById(R.id.server_address_view);
+		
+		serverNameView.setText(serverName);
+		serverAddressView.setText(serverAddress);
+		
+		serverItemView.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				onServerSelected(serverAddress);
+			}
+		});
+		
+		discoveredServersList.addView(serverItemView);
+	}
+	
 	private void createLastServersList(List<ServerEntry> servers)
 	{
 		lastServersList.removeAllViews();
@@ -198,7 +253,7 @@ public class ServerSelectActivity extends Activity
 		{
 			LayoutInflater viewInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			
-			View serverItemView = viewInflater.inflate(R.layout.item_selected_servers, null);
+			View serverItemView = viewInflater.inflate(R.layout.item_server, null);
 			
 			TextView serverNameView = (TextView)serverItemView.findViewById(R.id.server_name_view);
 			TextView serverAddressView = (TextView)serverItemView.findViewById(R.id.server_address_view);
