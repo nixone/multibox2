@@ -27,6 +27,20 @@ public interface SelectedServersStorage
 		{
 			return name;
 		}
+		
+		@Override
+		public int hashCode() {
+			return address.hashCode();
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if(!(obj instanceof ServerEntry)) {
+				return false;
+			}
+			
+			return ((ServerEntry)obj).address.equals(address);
+		}
 	}
 	
 	public interface SaveResultListener

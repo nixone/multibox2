@@ -37,6 +37,32 @@
 			android:orientation="vertical"
 			android:padding="@dimen/activity_padding">
 		
+		    <!-- List of last selected servers -->
+		    <LinearLayout
+				android:id="@+id/last_servers_fieldset"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:visibility="gone"
+				android:layout_weight="0"
+				android:background="@color/fieldset_background_color"
+				
+				android:padding="@dimen/fieldset_padding">
+		
+				<TextView
+					android:id="@+id/title_last_selected_servers"
+					android:text="@string/title_last_selected_servers"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+		
+				<LinearLayout
+					android:id="@+id/last_servers_list"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:orientation="vertical"/>
+			</LinearLayout>
+		    
 		    <!-- Direct connect form -->
 		    <LinearLayout
 				android:layout_width="match_parent"
@@ -44,6 +70,7 @@
 				android:layout_weight="0"
 				android:orientation="vertical"
 				android:padding="@dimen/fieldset_padding"
+				android:layout_marginTop="@dimen/vertical_spacing"
 				android:background="@color/fieldset_background_color">
 		
 				<TextView
@@ -79,32 +106,7 @@
 				</LinearLayout>
 			</LinearLayout>
 		    
-		    <!-- List of last selected servers -->
-		    <LinearLayout
-				android:id="@+id/last_servers_fieldset"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="vertical"
-				android:visibility="gone"
-				android:layout_weight="0"
-				android:background="@color/fieldset_background_color"
-				android:layout_marginTop="@dimen/vertical_spacing"
-				android:padding="@dimen/fieldset_padding">
-		
-				<TextView
-					android:id="@+id/title_last_selected_servers"
-					android:text="@string/title_last_selected_servers"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceLarge"/>
-		
-				<LinearLayout
-					android:id="@+id/last_servers_list"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:orientation="vertical"/>
-		
-			</LinearLayout>
+
 		
 		</LinearLayout>
 	</ScrollView>

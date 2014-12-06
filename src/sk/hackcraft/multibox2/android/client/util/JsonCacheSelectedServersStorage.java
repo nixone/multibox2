@@ -168,15 +168,18 @@ public class JsonCacheSelectedServersStorage implements SelectedServersStorage
 		ObjectMapper objectMapper = new ObjectMapper();
 		ObjectNode rootNode = (ObjectNode)readCacheFile(objectMapper);
 
-		List<ServerEntry> serverEntriesList = new LinkedList<ServerEntry>();
+		LinkedList<ServerEntry> serverEntriesList = new LinkedList<ServerEntry>();
 		
-		ServerEntry newServer = new ServerEntry(address, name);
-		serverEntriesList.add(newServer);
+
 		
 		ArrayNode savedServersNode = (ArrayNode)rootNode.path("savedServers");
 		List<ServerEntry> savedServerEntries = readSavedServerEntries(savedServersNode, SERVER_ENTRIES_LIMIT - 1);
 		
 		serverEntriesList.addAll(savedServerEntries);
+		
+		ServerEntry newServer = new ServerEntry(address, name);
+		while(serverEntriesList.remove(newServer));
+		serverEntriesList.addFirst(newServer);
 		
 		ArrayNode newSavedServersNode = serverEntriesToJsonArray(serverEntriesList);
 		rootNode.put("savedServers", newSavedServersNode);
