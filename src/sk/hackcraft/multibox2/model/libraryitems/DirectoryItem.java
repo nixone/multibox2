@@ -1,7 +1,9 @@
 package sk.hackcraft.multibox2.model.libraryitems;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -29,6 +31,8 @@ public class DirectoryItem extends GenericLibraryItem
 	
 	public List<LibraryItem> getItems()
 	{
-		return new LinkedList<LibraryItem>(content);
+		PriorityQueue<LibraryItem> queue = new PriorityQueue<LibraryItem>(1, LibraryItem.COMPARE_BY_NAME);
+		queue.addAll(content);
+		return new ArrayList<LibraryItem>(queue);
 	}
 }
