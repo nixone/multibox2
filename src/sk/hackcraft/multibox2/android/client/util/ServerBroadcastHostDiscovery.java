@@ -62,6 +62,8 @@ public class ServerBroadcastHostDiscovery implements HostDiscovery
 			public void run()
 			{	
 				try {
+					listener.onStarted();
+					
 					broadcaster.start(new ThreadFactory()
 					{
 						@Override
@@ -71,13 +73,14 @@ public class ServerBroadcastHostDiscovery implements HostDiscovery
 						}
 					});
 					
-					listener.onStarted();
 					Thread.sleep(NetworkStandards.DISCOVERY_TIMEOUT);
 					broadcaster.stop();
 					listener.onEnded();
 				} catch(IOException e) {
+					e.printStackTrace();
 					return;
 				} catch(InterruptedException e) {
+					e.printStackTrace();
 					return;
 				}
 			}

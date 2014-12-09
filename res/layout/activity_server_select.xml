@@ -36,6 +36,26 @@
 			android:layout_height="wrap_content"
 			android:orientation="vertical"
 			android:padding="@dimen/activity_padding">
+			
+		    <!-- List of last discovered servers -->
+		    <LinearLayout
+				android:id="@+id/local_server_fieldset"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:layout_weight="0"
+				android:background="@color/fieldset_background_color"
+				android:padding="@dimen/fieldset_padding">
+		
+				<Button
+					android:id="@+id/local_server"
+					android:text="@string/local_server"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:height="@dimen/touch_view_height"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+			
+			</LinearLayout>
 		
 			<!-- List of last discovered servers -->
 		    <LinearLayout
@@ -46,6 +66,7 @@
 				android:layout_weight="0"
 				android:visibility="gone"
 				android:background="@color/fieldset_background_color"
+				android:layout_marginTop="@dimen/vertical_spacing"
 				android:padding="@dimen/fieldset_padding">
 		
 				<TextView

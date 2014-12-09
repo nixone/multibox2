@@ -1,5 +1,6 @@
 package sk.hackcraft.multibox2.android.client;
 
+import java.net.InetAddress;
 import java.util.List;
 
 import sk.hackcraft.multibox2.android.client.HostService.ProvidingBinder;
@@ -39,6 +40,7 @@ public class ServerSelectActivity extends Activity
 	private LinearLayout lastServersList;
 	private LinearLayout discoveredServersList;
 	private View disconnectNotification;
+	private Button localServerButton;
 
 	private SelectedServersStorage lastServersStorage;
 	
@@ -52,6 +54,17 @@ public class ServerSelectActivity extends Activity
 		application = (MultiBoxApplication)getApplication();
 
 		setContentView(R.layout.activity_server_select);
+		
+		localServerButton = (Button)findViewById(R.id.local_server);
+		localServerButton.setOnClickListener(new View.OnClickListener()
+		{
+			
+			@Override
+			public void onClick(View arg0)
+			{
+				onServerSelected("localhost");
+			}
+		});
 		
 		serverAddressInputField = (EditText)findViewById(R.id.server_address_input_field);
 		serverAddressInputField.setOnEditorActionListener(new TextView.OnEditorActionListener()
@@ -70,6 +83,8 @@ public class ServerSelectActivity extends Activity
 				}
 			}
 		});
+		
+		
 		
 		disconnectNotification = findViewById(R.id.disconnect_notification);
 		
@@ -130,11 +145,11 @@ public class ServerSelectActivity extends Activity
 		View discoveredServersFieldset = findViewById(R.id.discovered_servers_fieldset);
 		discoveredServersFieldset.setVisibility(View.GONE);
 		discoveredServersList.removeAllViews();
+		
 		((MultiBoxApplication)getApplication()).requestServerDiscovery(new DiscoveryListener()
 		{
 			@Override
-			public void onStarted() {
-			}
+			public void onStarted() {}
 			
 			@Override
 			public void onHostFound(final String address, final String name)
@@ -332,6 +347,8 @@ public class ServerSelectActivity extends Activity
 			serviceBound = true;
 			service = ((ProvidingBinder)arg1).getService();
 			service.getPlayer().play();
+			
+			
 		}
 		
 		@Override
