@@ -18,7 +18,7 @@
     <string name="placeholder_server_address">Server Address</string>
     <string name="message_connection_problem">Can\'t communicate with MultiBox server, check your network.</string>
     <string name="playlist">Playlist</string>
-    <string name="library">Library</string>
+    <string name="library_server">Host</string>
     <string name="title_direct_server_connect">Direct connect</string>
     <string name="title_last_selected_servers">History</string>
     <string name="hint_server_address">Server address</string>
@@ -27,5 +27,6 @@
     <string name="title_activity_test_host">TestHostActivity</string>
     <string name="title_discovered_servers">Nearby</string>
     <string name="local_server">Play here</string>
+    <string name="library_local">Local</string>
 
 </resources>

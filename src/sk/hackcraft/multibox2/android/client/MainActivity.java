@@ -65,8 +65,12 @@ public class MainActivity extends Activity implements BackPressedEvent
 		tabsAdapter.addTab(tab, PlayerFragment.class);
 		
 		tab = actionBar.newTab();
-		tab.setText(R.string.library);
-		tabsAdapter.addTab(tab, LibraryFragment.class);
+		tab.setText(R.string.library_server);
+		tabsAdapter.addTab(tab, ServerLibraryFragment.class);
+		
+		tab = actionBar.newTab();
+		tab.setText(R.string.library_local);
+		tabsAdapter.addTab(tab, LocalLibraryFragment.class);
 
 		viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener()
 		{

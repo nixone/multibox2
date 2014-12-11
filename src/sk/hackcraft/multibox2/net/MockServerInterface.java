@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import sk.hackcraft.multibox2.android.host.Song;
 import sk.hackcraft.multibox2.model.LibraryItem;
 import sk.hackcraft.multibox2.model.libraryitems.DirectoryItem;
 import sk.hackcraft.multibox2.model.libraryitems.MultimediaItem;
@@ -356,5 +357,12 @@ public class MockServerInterface implements ServerInterface
 		{
 			startPlaying();
 		}
+	}
+
+	@Override
+	public void uploadMultimedia(Song multimedia)
+	{
+		// TODO Remove
+		throw new UnsupportedOperationException("Mockup doesn't allow to upload multimedia");
 	}
 }

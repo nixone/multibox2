@@ -3,6 +3,7 @@ package sk.hackcraft.multibox2.android.host;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import sk.hackcraft.multibox2.model.Library;
 import sk.hackcraft.multibox2.model.LibraryItem;
 import sk.hackcraft.multibox2.model.libraryitems.DirectoryItem;
 import sk.hackcraft.util.KeyGenerator;
@@ -11,7 +12,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
-public class LibraryView
+public class LibraryView implements Library
 {
 	static public interface NewItemListener
 	{
@@ -27,12 +28,14 @@ public class LibraryView
 		}
 	};
 
-	private KeyGenerator<Long> idGenerator = new UniqueLongKeyGenerator(1L);
+	private KeyGenerator<Long> idGenerator = new UniqueLongKeyGenerator(Library.ROOT_DIRECTORY+1);
 
 	private HashMap<Long, LibraryItem> items = new HashMap<Long, LibraryItem>();
 	private HashMap<String, Artist> artists = new HashMap<String, Artist>();
 
-	private DirectoryItem rootItem = new DirectoryItem(0, "Library");
+	private DirectoryItem rootItem = new DirectoryItem(Library.ROOT_DIRECTORY, "Library");
+	
+	private HashSet<LibraryEventListener> listeners = new HashSet<Library.LibraryEventListener>();
 
 	public LibraryView()
 	{
@@ -99,6 +102,48 @@ public class LibraryView
 		synchronized (this)
 		{
 			return items.get(id);
+		}
+	}
+
+	@Override
+	public void init()
+	{
+		// nothing
+	}
+
+	@Override
+	public void close()
+	{
+		// nothing
+	}
+
+	@Override
+	public void requestItem(long id)
+	{
+		LibraryItem item = getItem(id);
+		
+		HashSet<LibraryEventListener> listenersToInvoke = new HashSet<Library.LibraryEventListener>();
+		synchronized(listeners) {
+			listenersToInvoke.addAll(listeners);
+		}
+		for(LibraryEventListener listener : listenersToInvoke) {
+			listener.onItemReceived(item);
+		}
+	}
+
+	@Override
+	public void registerLibraryEventListener(LibraryEventListener listener)
+	{
+		synchronized(listeners) {
+			listeners.add(listener);
+		}
+	}
+
+	@Override
+	public void unregisterLibraryEventListener(LibraryEventListener listener)
+	{
+		synchronized(listeners) {
+			listeners.remove(listener);
 		}
 	}
 }

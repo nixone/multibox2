@@ -12,7 +12,8 @@ public enum MessageTypes implements MessageType
 	GET_LIBRARY_ITEM(3),
 	ADD_LIBRARY_ITEM_TO_PLAYLIST(4),
 	GET_SERVER_INFO(5),
-	PING(7);
+	PING(7),
+	UPLOAD_MULTIMEDIA(8);
 
 	private static Map<Integer, MessageTypes> convertMap;
 	

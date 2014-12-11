@@ -7,12 +7,12 @@ import sk.hackcraft.multibox2.model.Library;
 import sk.hackcraft.multibox2.model.LibraryItem;
 import sk.hackcraft.multibox2.model.LibraryItemType;
 import sk.hackcraft.multibox2.model.Playlist;
-import sk.hackcraft.multibox2.model.Server;
 import sk.hackcraft.multibox2.model.libraryitems.DirectoryItem;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class LibraryFragment extends Fragment implements BackPressedListener
+public abstract class LibraryFragment extends Fragment implements BackPressedListener
 {
 	private static final String SAVED_STATE_KEY_HISTORY = "history";
 	
@@ -39,6 +39,9 @@ public class LibraryFragment extends Fragment implements BackPressedListener
 	
 	BackPressedEvent backPressedEvent;
 	private BackPressedListener backPressedListener;
+	
+	public abstract Library getLibrary();
+	public abstract Playlist getPlaylist();
 	
 	@Override
 	public void onAttach(Activity activity)
@@ -72,11 +75,8 @@ public class LibraryFragment extends Fragment implements BackPressedListener
 		setRetainInstance(true);
 		
 		Activity activity = getActivity();
-		MultiBoxApplication application = (MultiBoxApplication)activity.getApplication();
-		
-		Server server = application.getServer();
-		library = server.getLibrary();
-		playlist = server.getPlaylist();
+		library = getLibrary();
+		playlist = getPlaylist();
 		
 		libraryListener = new LibraryListener();
 		library.registerLibraryEventListener(libraryListener);
@@ -127,8 +127,8 @@ public class LibraryFragment extends Fragment implements BackPressedListener
 				switch (item.getType())
 				{
 					case DIRECTORY:
-						requestDirectory(itemId);
 						history.push(itemId);
+						requestDirectory(itemId);
 						break;
 					case MULTIMEDIA:
 						String messageTemplate = getString(R.string.notice_queying_multimedia);
@@ -226,9 +226,6 @@ public class LibraryFragment extends Fragment implements BackPressedListener
 	public void requestDirectory(long id)
 	{
 		library.requestItem(id);
-		
-		contentAdapter.clear();
-		contentAdapter.notifyDataSetChanged();
 	}
 
 	private void setDirectory(DirectoryItem directory)
@@ -269,7 +266,7 @@ public class LibraryFragment extends Fragment implements BackPressedListener
 			String name;
 			if (libraryItem.getType() == LibraryItemType.DIRECTORY)
 			{
-				name = "[DIR] " + libraryItem.getName();
+				name = "[" + libraryItem.getName()+"]";
 			}
 			else
 			{
@@ -285,10 +282,11 @@ public class LibraryFragment extends Fragment implements BackPressedListener
 	private class LibraryListener implements Library.LibraryEventListener
 	{
 		@Override
-		public void onItemReceived(LibraryItem item)
+		public void onItemReceived(final LibraryItem item)
 		{
 			if (item.getType() == LibraryItemType.DIRECTORY)
 			{
+				Log.d("MAINACTIVITY", "Received directory "+item);
 				DirectoryItem directory = (DirectoryItem)item;
 				setDirectory(directory);
 			}

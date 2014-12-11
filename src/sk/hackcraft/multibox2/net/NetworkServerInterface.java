@@ -1,5 +1,6 @@
 package sk.hackcraft.multibox2.net;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import sk.hackcraft.netinterface.message.DataStringMessage;
 import sk.hackcraft.netinterface.message.DataStringMessageReceiver;
 import sk.hackcraft.netinterface.message.EmptyMessage;
 import sk.hackcraft.netinterface.message.Message;
+import sk.hackcraft.netinterface.message.MessageReceiver;
 import sk.hackcraft.netinterface.message.transformer.DataTransformer;
 import sk.hackcraft.util.MessageQueue;
 
