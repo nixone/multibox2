@@ -37,7 +37,7 @@ public class Host
 				}
 				try
 				{
-					HostClient client = new HostClient(serverSocket.accept());
+					ClientConnection client = new ClientConnection(serverSocket.accept());
 
 					synchronized (clients)
 					{
@@ -67,17 +67,17 @@ public class Host
 					}
 				}
 
-				HashSet<HostClient> clientsCopy = null;
-				HashSet<HostClient> clientsToBeClosed = new HashSet<HostClient>();
+				HashSet<ClientConnection> clientsCopy = null;
+				HashSet<ClientConnection> clientsToBeClosed = new HashSet<ClientConnection>();
 
 				synchronized (clients)
 				{
-					clientsCopy = new HashSet<HostClient>(clients);
+					clientsCopy = new HashSet<ClientConnection>(clients);
 				}
 
 				boolean readSomething = false;
 
-				for (HostClient client : clientsCopy)
+				for (ClientConnection client : clientsCopy)
 				{
 					try
 					{
@@ -118,7 +118,7 @@ public class Host
 					}
 				}
 
-				for (HostClient client : clientsToBeClosed)
+				for (ClientConnection client : clientsToBeClosed)
 				{
 					try
 					{
@@ -155,7 +155,7 @@ public class Host
 
 	private ServerSocket serverSocket = null;
 
-	private Set<HostClient> clients = new HashSet<HostClient>();
+	private Set<ClientConnection> clients = new HashSet<ClientConnection>();
 
 	private HashMap<Integer, MessageHandler> messageHandlers = new HashMap<Integer, MessageHandler>();
 

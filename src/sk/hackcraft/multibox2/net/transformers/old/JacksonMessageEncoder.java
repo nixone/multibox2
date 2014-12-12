@@ -1,4 +1,4 @@
-package sk.hackcraft.multibox2.net.transformers;
+package sk.hackcraft.multibox2.net.transformers.old;
 
 import sk.hackcraft.netinterface.message.transformer.DataTransformException;
 import sk.hackcraft.netinterface.message.transformer.DataTransformer;

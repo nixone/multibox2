@@ -1,4 +1,4 @@
-package sk.hackcraft.multibox2.net.transformers;
+package sk.hackcraft.multibox2.net.transformers.old;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

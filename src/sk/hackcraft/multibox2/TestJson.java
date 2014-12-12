@@ -6,9 +6,9 @@ import java.io.IOException;
 import sk.hackcraft.multibox2.net.data.GetLibraryItemData;
 import sk.hackcraft.multibox2.net.data.GetPlayerStateResultData;
 import sk.hackcraft.multibox2.net.data.GetPlaylistResultData;
-import sk.hackcraft.multibox2.net.transformers.GetLibraryItemDecoder;
-import sk.hackcraft.multibox2.net.transformers.GetPlayerStateDecoder;
-import sk.hackcraft.multibox2.net.transformers.GetPlaylistDecoder;
+import sk.hackcraft.multibox2.net.transformers.old.GetLibraryItemDecoder;
+import sk.hackcraft.multibox2.net.transformers.old.GetPlayerStateDecoder;
+import sk.hackcraft.multibox2.net.transformers.old.GetPlaylistDecoder;
 import sk.hackcraft.netinterface.message.transformer.DataTransformException;
 import sk.hackcraft.util.FileToStringReader;
 

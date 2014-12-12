@@ -1,4 +1,4 @@
-package sk.hackcraft.multibox2.net.transformers;
+package sk.hackcraft.multibox2.net.transformers.old;
 
 import java.util.Iterator;
 import java.util.LinkedList;

@@ -11,7 +11,7 @@ import sk.hackcraft.netinterface.message.MessageFactory;
 import sk.hackcraft.netinterface.message.MessageType;
 import sk.hackcraft.netinterface.message.MessageTypeFactory;
 
-public class HostClient
+public class ClientConnection
 {
 	private Socket socket;
 	private DataInputStream input;
@@ -24,7 +24,7 @@ public class HostClient
 	private int completeDataSize = 0;
 	private byte[] readData = null;
 	
-	public HostClient(Socket socket) throws IOException {
+	public ClientConnection(Socket socket) throws IOException {
 		this.socket = socket;
 		
 		input = new DataInputStream(socket.getInputStream());
