@@ -1,11 +1,11 @@
 package sk.hackcraft.multibox2.net.host.handlers;
 
 import sk.hackcraft.multibox2.net.MessageTypes;
-import sk.hackcraft.multibox2.net.host.JsonMessageHandler;
+import sk.hackcraft.multibox2.net.host.DuplexJacksonMessageHandler;
 import sk.hackcraft.multibox2.net.host.messages.Empty;
 import sk.hackcraft.multibox2.net.host.messages.GetServerInfoResponse;
 
-public class GetServerInfoHandler extends JsonMessageHandler<Empty, GetServerInfoResponse>
+public class GetServerInfoHandler extends DuplexJacksonMessageHandler<Empty, GetServerInfoResponse>
 {
 	private String serverName;
 	
@@ -16,7 +16,7 @@ public class GetServerInfoHandler extends JsonMessageHandler<Empty, GetServerInf
 	}
 
 	@Override
-	public GetServerInfoResponse handleJson(Empty request)
+	public GetServerInfoResponse handle(Empty request)
 	{
 		return new GetServerInfoResponse(serverName);
 	}

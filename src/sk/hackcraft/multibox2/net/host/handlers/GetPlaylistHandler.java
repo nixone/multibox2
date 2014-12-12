@@ -2,11 +2,11 @@ package sk.hackcraft.multibox2.net.host.handlers;
 
 import sk.hackcraft.multibox2.android.host.Player;
 import sk.hackcraft.multibox2.net.MessageTypes;
-import sk.hackcraft.multibox2.net.host.JsonMessageHandler;
+import sk.hackcraft.multibox2.net.host.DuplexJacksonMessageHandler;
 import sk.hackcraft.multibox2.net.host.messages.Empty;
 import sk.hackcraft.multibox2.net.host.messages.GetPlaylistResponse;
 
-public class GetPlaylistHandler extends JsonMessageHandler<Empty, GetPlaylistResponse>
+public class GetPlaylistHandler extends DuplexJacksonMessageHandler<Empty, GetPlaylistResponse>
 {
 	private Player player;
 	
@@ -17,7 +17,7 @@ public class GetPlaylistHandler extends JsonMessageHandler<Empty, GetPlaylistRes
 	}
 
 	@Override
-	public GetPlaylistResponse handleJson(Empty request)
+	public GetPlaylistResponse handle(Empty request)
 	{
 		return new GetPlaylistResponse(player.getSongs());
 	}

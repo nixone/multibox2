@@ -5,11 +5,11 @@ import sk.hackcraft.multibox2.android.host.Player;
 import sk.hackcraft.multibox2.android.host.Song;
 import sk.hackcraft.multibox2.model.LibraryItem;
 import sk.hackcraft.multibox2.net.MessageTypes;
-import sk.hackcraft.multibox2.net.host.JsonMessageHandler;
+import sk.hackcraft.multibox2.net.host.DuplexJacksonMessageHandler;
 import sk.hackcraft.multibox2.net.host.messages.AddLibraryItemToPlaylistRequest;
 import sk.hackcraft.multibox2.net.host.messages.AddLibraryItemToPlaylistResponse;
 
-public class AddLibraryItemToPlaylistHandler extends JsonMessageHandler<AddLibraryItemToPlaylistRequest, AddLibraryItemToPlaylistResponse>
+public class AddLibraryItemToPlaylistHandler extends DuplexJacksonMessageHandler<AddLibraryItemToPlaylistRequest, AddLibraryItemToPlaylistResponse>
 {
 	private LibraryView library;
 	private Player player;
@@ -22,7 +22,7 @@ public class AddLibraryItemToPlaylistHandler extends JsonMessageHandler<AddLibra
 	}
 
 	@Override
-	public AddLibraryItemToPlaylistResponse handleJson(AddLibraryItemToPlaylistRequest request)
+	public AddLibraryItemToPlaylistResponse handle(AddLibraryItemToPlaylistRequest request)
 	{
 		LibraryItem item = library.getItem(request.getMultimediaId());
 		

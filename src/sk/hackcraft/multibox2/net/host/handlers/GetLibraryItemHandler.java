@@ -2,11 +2,11 @@ package sk.hackcraft.multibox2.net.host.handlers;
 
 import sk.hackcraft.multibox2.android.host.LibraryView;
 import sk.hackcraft.multibox2.net.MessageTypes;
-import sk.hackcraft.multibox2.net.host.JsonMessageHandler;
+import sk.hackcraft.multibox2.net.host.DuplexJacksonMessageHandler;
 import sk.hackcraft.multibox2.net.host.messages.GetLibraryItemRequest;
 import sk.hackcraft.multibox2.net.host.messages.GetLibraryItemResponse;
 
-public class GetLibraryItemHandler extends JsonMessageHandler<GetLibraryItemRequest, GetLibraryItemResponse>
+public class GetLibraryItemHandler extends DuplexJacksonMessageHandler<GetLibraryItemRequest, GetLibraryItemResponse>
 {
 	private LibraryView library;
 	
@@ -17,7 +17,7 @@ public class GetLibraryItemHandler extends JsonMessageHandler<GetLibraryItemRequ
 	}
 
 	@Override
-	public GetLibraryItemResponse handleJson(GetLibraryItemRequest request)
+	public GetLibraryItemResponse handle(GetLibraryItemRequest request)
 	{
 		return new GetLibraryItemResponse(
 				library.getItem(

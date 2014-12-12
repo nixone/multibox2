@@ -1,31 +1,24 @@
 package sk.hackcraft.multibox2.net;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import sk.hackcraft.multibox2.model.LibraryItem;
 import sk.hackcraft.multibox2.model.libraryitems.MultimediaItem;
-import sk.hackcraft.multibox2.net.data.AddMultimediaToPlaylistResultData;
-import sk.hackcraft.multibox2.net.data.GetLibraryItemData;
-import sk.hackcraft.multibox2.net.data.GetPlayerStateResultData;
-import sk.hackcraft.multibox2.net.data.GetPlaylistResultData;
-import sk.hackcraft.multibox2.net.data.GetServerInfoResultData;
 import sk.hackcraft.multibox2.net.data.LibraryItemIdData;
 import sk.hackcraft.multibox2.net.data.MultimediaItemIdData;
-import sk.hackcraft.multibox2.net.transformers.old.AddMultimediaToPlaylistDecoder;
+import sk.hackcraft.multibox2.net.host.messages.AddLibraryItemToPlaylistResponse;
+import sk.hackcraft.multibox2.net.host.messages.GetLibraryItemResponse;
+import sk.hackcraft.multibox2.net.host.messages.GetPlayerStateResponse;
+import sk.hackcraft.multibox2.net.host.messages.GetPlaylistResponse;
+import sk.hackcraft.multibox2.net.host.messages.GetServerInfoResponse;
 import sk.hackcraft.multibox2.net.transformers.old.DataStructJacksonEncoder;
-import sk.hackcraft.multibox2.net.transformers.old.GetLibraryItemDecoder;
-import sk.hackcraft.multibox2.net.transformers.old.GetPlayerStateDecoder;
-import sk.hackcraft.multibox2.net.transformers.old.GetPlaylistDecoder;
-import sk.hackcraft.multibox2.net.transformers.old.GetServerInfoDecoder;
 import sk.hackcraft.netinterface.connection.AsynchronousMessageInterface;
 import sk.hackcraft.netinterface.connection.AsynchronousMessageInterface.SeriousErrorListener;
 import sk.hackcraft.netinterface.message.DataStringMessage;
-import sk.hackcraft.netinterface.message.DataStringMessageReceiver;
 import sk.hackcraft.netinterface.message.EmptyMessage;
+import sk.hackcraft.netinterface.message.JacksonMessageReceiver;
 import sk.hackcraft.netinterface.message.Message;
-import sk.hackcraft.netinterface.message.MessageReceiver;
 import sk.hackcraft.netinterface.message.transformer.DataTransformer;
 import sk.hackcraft.util.MessageQueue;
 
@@ -143,21 +136,15 @@ public class NetworkServerInterface implements ServerInterface
 		}
 	}
 	
-	private class GetPlayerStateReceiver extends DataStringMessageReceiver<GetPlayerStateResultData>
+	private class GetPlayerStateReceiver extends JacksonMessageReceiver<GetPlayerStateResponse>
 	{
 		public GetPlayerStateReceiver(MessageQueue messageQueue)
 		{
-			super(messageQueue);
-		}
-		
-		@Override
-		protected DataTransformer<String, GetPlayerStateResultData> createParser()
-		{
-			return new GetPlayerStateDecoder();
+			super(messageQueue, GetPlayerStateResponse.class);
 		}
 
 		@Override
-		public void onResult(GetPlayerStateResultData result)
+		public void onResult(GetPlayerStateResponse result)
 		{
 			MultimediaItem multimedia = result.getMultimedia();
 			int playbackPosition = result.getPlaybackPosition();
@@ -170,21 +157,15 @@ public class NetworkServerInterface implements ServerInterface
 		}
 	}
 	
-	private class GetPlaylistReceiver extends DataStringMessageReceiver<GetPlaylistResultData>
+	private class GetPlaylistReceiver extends JacksonMessageReceiver<GetPlaylistResponse>
 	{
 		public GetPlaylistReceiver(MessageQueue messageQueue)
 		{
-			super(messageQueue);
+			super(messageQueue, GetPlaylistResponse.class);
 		}
-
+		
 		@Override
-		protected DataTransformer<String, GetPlaylistResultData> createParser()
-		{
-			return new GetPlaylistDecoder();
-		}
-
-		@Override
-		protected void onResult(GetPlaylistResultData result)
+		protected void onResult(GetPlaylistResponse result)
 		{
 			List<MultimediaItem> playlist = result.getPlaylist();
 			
@@ -195,21 +176,15 @@ public class NetworkServerInterface implements ServerInterface
 		}
 	}
 	
-	private class AddMultimediaToPlaylistReceiver extends DataStringMessageReceiver<AddMultimediaToPlaylistResultData>
+	private class AddMultimediaToPlaylistReceiver extends JacksonMessageReceiver<AddLibraryItemToPlaylistResponse>
 	{
 		public AddMultimediaToPlaylistReceiver(MessageQueue messageQueue)
 		{
-			super(messageQueue);
+			super(messageQueue, AddLibraryItemToPlaylistResponse.class);
 		}
 
 		@Override
-		protected DataTransformer<String, AddMultimediaToPlaylistResultData> createParser()
-		{
-			return new AddMultimediaToPlaylistDecoder();
-		}
-
-		@Override
-		protected void onResult(AddMultimediaToPlaylistResultData result)
+		protected void onResult(AddLibraryItemToPlaylistResponse result)
 		{
 			final boolean success = result.isSuccess();
 			final MultimediaItem multimedia = result.getMultimedia();
@@ -221,21 +196,15 @@ public class NetworkServerInterface implements ServerInterface
 		}
 	}
 	
-	private class GetLibraryItemReceiver extends DataStringMessageReceiver<GetLibraryItemData>
+	private class GetLibraryItemReceiver extends JacksonMessageReceiver<GetLibraryItemResponse>
 	{
 		public GetLibraryItemReceiver(MessageQueue messageQueue)
 		{
-			super(messageQueue);
+			super(messageQueue, GetLibraryItemResponse.class);
 		}
 
 		@Override
-		protected DataTransformer<String, GetLibraryItemData> createParser()
-		{
-			return new GetLibraryItemDecoder();
-		}
-
-		@Override
-		protected void onResult(GetLibraryItemData result)
+		protected void onResult(GetLibraryItemResponse result)
 		{
 			final LibraryItem libraryItem = result.getLibraryItem();
 			
@@ -246,21 +215,15 @@ public class NetworkServerInterface implements ServerInterface
 		}
 	}
 	
-	private class GetServerInfoReceiver extends DataStringMessageReceiver<GetServerInfoResultData>
+	private class GetServerInfoReceiver extends JacksonMessageReceiver<GetServerInfoResponse>
 	{
 		public GetServerInfoReceiver(MessageQueue messageQueue)
 		{
-			super(messageQueue);
+			super(messageQueue, GetServerInfoResponse.class);
 		}
 
 		@Override
-		protected DataTransformer<String, GetServerInfoResultData> createParser()
-		{
-			return new GetServerInfoDecoder();
-		}
-
-		@Override
-		protected void onResult(GetServerInfoResultData result)
+		protected void onResult(GetServerInfoResponse result)
 		{
 			final String serverName = result.getServerName();
 			

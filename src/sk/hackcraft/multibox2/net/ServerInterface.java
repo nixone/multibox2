@@ -2,7 +2,6 @@ package sk.hackcraft.multibox2.net;
 
 import java.util.List;
 
-import sk.hackcraft.multibox2.android.host.Song;
 import sk.hackcraft.multibox2.model.LibraryItem;
 import sk.hackcraft.multibox2.model.libraryitems.MultimediaItem;
 
@@ -20,7 +19,7 @@ public interface ServerInterface
 	
 	public void requestLibraryItem(long itemId);
 	public void addLibraryItemToPlaylist(long itemId);
-	public void uploadMultimedia(Song multimedia);
+	//public void uploadMultimedia(Song multimedia);
 	
 	public interface ServerInterfaceEventListener
 	{
@@ -35,7 +34,7 @@ public interface ServerInterface
 		
 		public void onAddingLibraryItemToPlaylistResult(boolean result, MultimediaItem multimedia);
 		
-		public void onMultimediaUploaded(long itemId);
+		//public void onMultimediaUploaded(long itemId);
 	}
 	
 	public class ServerInterfaceEventAdapter implements ServerInterfaceEventListener
@@ -69,10 +68,10 @@ public interface ServerInterface
 		public void onAddingLibraryItemToPlaylistResult(boolean result, MultimediaItem multimedia)
 		{
 		}
-		
+		/*
 		@Override
 		public void onMultimediaUploaded(long itemId) {
 			
-		}
+		}*/
 	}
 }
