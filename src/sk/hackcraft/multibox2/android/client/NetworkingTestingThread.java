@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import sk.hackcraft.multibox2.net.MessageTypes;
 import sk.hackcraft.multibox2.net.host.Host;
 import sk.hackcraft.multibox2.net.host.handlers.PingHandler;
-import sk.hackcraft.multibox2.net.host.messages.Empty;
+import sk.hackcraft.multibox2.net.messages.Empty;
 import sk.hackcraft.netinterface.message.Message;
 import sk.hackcraft.netinterface.message.MessageType;
 import android.util.Log;

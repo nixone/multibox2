@@ -5,13 +5,13 @@ import java.util.List;
 
 import sk.hackcraft.multibox2.model.LibraryItem;
 import sk.hackcraft.multibox2.model.libraryitems.MultimediaItem;
-import sk.hackcraft.multibox2.net.data.LibraryItemIdData;
-import sk.hackcraft.multibox2.net.data.MultimediaItemIdData;
-import sk.hackcraft.multibox2.net.host.messages.AddLibraryItemToPlaylistResponse;
-import sk.hackcraft.multibox2.net.host.messages.GetLibraryItemResponse;
-import sk.hackcraft.multibox2.net.host.messages.GetPlayerStateResponse;
-import sk.hackcraft.multibox2.net.host.messages.GetPlaylistResponse;
-import sk.hackcraft.multibox2.net.host.messages.GetServerInfoResponse;
+import sk.hackcraft.multibox2.net.messages.AddLibraryItemToPlaylistRequest;
+import sk.hackcraft.multibox2.net.messages.AddLibraryItemToPlaylistResponse;
+import sk.hackcraft.multibox2.net.messages.GetLibraryItemRequest;
+import sk.hackcraft.multibox2.net.messages.GetLibraryItemResponse;
+import sk.hackcraft.multibox2.net.messages.GetPlayerStateResponse;
+import sk.hackcraft.multibox2.net.messages.GetPlaylistResponse;
+import sk.hackcraft.multibox2.net.messages.GetServerInfoResponse;
 import sk.hackcraft.netinterface.connection.AsynchronousMessageInterface;
 import sk.hackcraft.netinterface.connection.AsynchronousMessageInterface.SeriousErrorListener;
 import sk.hackcraft.netinterface.message.EmptyMessage;
@@ -85,9 +85,9 @@ public class NetworkServerInterface implements ServerInterface
 	@Override
 	public void requestLibraryItem(long itemId)
 	{
-		LibraryItemIdData data = new LibraryItemIdData(itemId);
+		GetLibraryItemRequest data = new GetLibraryItemRequest(itemId);
 		
-		Message message = new JacksonObjectMessage<LibraryItemIdData>(MessageTypes.GET_LIBRARY_ITEM, data);
+		Message message = new JacksonObjectMessage<GetLibraryItemRequest>(MessageTypes.GET_LIBRARY_ITEM, data);
 		
 		messageInterface.sendMessage(message);
 	}
@@ -95,9 +95,9 @@ public class NetworkServerInterface implements ServerInterface
 	@Override
 	public void addLibraryItemToPlaylist(long itemId)
 	{
-		MultimediaItemIdData data = new MultimediaItemIdData(itemId);
+		AddLibraryItemToPlaylistRequest data = new AddLibraryItemToPlaylistRequest(itemId);
 		
-		Message message = new JacksonObjectMessage<MultimediaItemIdData>(MessageTypes.ADD_LIBRARY_ITEM_TO_PLAYLIST, data);
+		Message message = new JacksonObjectMessage<AddLibraryItemToPlaylistRequest>(MessageTypes.ADD_LIBRARY_ITEM_TO_PLAYLIST, data);
 		
 		messageInterface.sendMessage(message);
 	}

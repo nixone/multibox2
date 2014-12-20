@@ -2,7 +2,7 @@ package sk.hackcraft.multibox2.net.host.handlers;
 
 import sk.hackcraft.multibox2.net.MessageTypes;
 import sk.hackcraft.multibox2.net.host.DuplexJacksonMessageHandler;
-import sk.hackcraft.multibox2.net.host.messages.Empty;
+import sk.hackcraft.multibox2.net.messages.Empty;
 
 public class PingHandler extends DuplexJacksonMessageHandler<Empty, Empty>
 {

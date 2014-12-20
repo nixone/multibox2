@@ -3,9 +3,6 @@ package sk.hackcraft.multibox2;
 import java.io.File;
 import java.io.IOException;
 
-import sk.hackcraft.multibox2.net.data.GetLibraryItemData;
-import sk.hackcraft.multibox2.net.data.GetPlayerStateResultData;
-import sk.hackcraft.multibox2.net.data.GetPlaylistResultData;
 import sk.hackcraft.netinterface.message.transformer.DataTransformException;
 import sk.hackcraft.util.FileToStringReader;
 

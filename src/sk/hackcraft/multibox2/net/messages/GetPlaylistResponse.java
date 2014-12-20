@@ -1,4 +1,4 @@
-package sk.hackcraft.multibox2.net.host.messages;
+package sk.hackcraft.multibox2.net.messages;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -6,8 +6,8 @@ import sk.hackcraft.multibox2.android.host.Song;
 import sk.hackcraft.multibox2.model.LibraryItem;
 import sk.hackcraft.multibox2.net.MessageTypes;
 import sk.hackcraft.multibox2.net.host.DuplexJacksonMessageHandler;
-import sk.hackcraft.multibox2.net.host.messages.AddLibraryItemToPlaylistRequest;
-import sk.hackcraft.multibox2.net.host.messages.AddLibraryItemToPlaylistResponse;
+import sk.hackcraft.multibox2.net.messages.AddLibraryItemToPlaylistRequest;
+import sk.hackcraft.multibox2.net.messages.AddLibraryItemToPlaylistResponse;
 
 public class AddLibraryItemToPlaylistHandler extends DuplexJacksonMessageHandler<AddLibraryItemToPlaylistRequest, AddLibraryItemToPlaylistResponse>
 {

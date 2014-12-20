@@ -1,4 +1,4 @@
-package sk.hackcraft.multibox2.net.host.messages;
+package sk.hackcraft.multibox2.net.messages;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
