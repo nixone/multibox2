@@ -1,6 +1,5 @@
 package sk.hackcraft.netinterface.message;
 
-
 public class EmptyMessage implements Message
 {
 	private final MessageType messageType;

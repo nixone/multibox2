@@ -6,14 +6,11 @@ import java.io.IOException;
 import sk.hackcraft.multibox2.net.data.GetLibraryItemData;
 import sk.hackcraft.multibox2.net.data.GetPlayerStateResultData;
 import sk.hackcraft.multibox2.net.data.GetPlaylistResultData;
-import sk.hackcraft.multibox2.net.transformers.old.GetLibraryItemDecoder;
-import sk.hackcraft.multibox2.net.transformers.old.GetPlayerStateDecoder;
-import sk.hackcraft.multibox2.net.transformers.old.GetPlaylistDecoder;
 import sk.hackcraft.netinterface.message.transformer.DataTransformException;
 import sk.hackcraft.util.FileToStringReader;
 
 public class TestJson
-{
+{/* TODO Change
 	public static void main(String[] args)
 	{
 		try
@@ -57,5 +54,5 @@ public class TestJson
 		GetLibraryItemData data = new GetLibraryItemDecoder().transform(json);
 		
 		System.out.println(data);
-	}
+	}*/
 }

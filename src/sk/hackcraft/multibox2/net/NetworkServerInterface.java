@@ -12,14 +12,12 @@ import sk.hackcraft.multibox2.net.host.messages.GetLibraryItemResponse;
 import sk.hackcraft.multibox2.net.host.messages.GetPlayerStateResponse;
 import sk.hackcraft.multibox2.net.host.messages.GetPlaylistResponse;
 import sk.hackcraft.multibox2.net.host.messages.GetServerInfoResponse;
-import sk.hackcraft.multibox2.net.transformers.old.DataStructJacksonEncoder;
 import sk.hackcraft.netinterface.connection.AsynchronousMessageInterface;
 import sk.hackcraft.netinterface.connection.AsynchronousMessageInterface.SeriousErrorListener;
-import sk.hackcraft.netinterface.message.DataStringMessage;
 import sk.hackcraft.netinterface.message.EmptyMessage;
-import sk.hackcraft.netinterface.message.JacksonMessageReceiver;
+import sk.hackcraft.netinterface.message.JacksonObjectMessage;
+import sk.hackcraft.netinterface.message.JacksonObjectMessageReceiver;
 import sk.hackcraft.netinterface.message.Message;
-import sk.hackcraft.netinterface.message.transformer.DataTransformer;
 import sk.hackcraft.util.MessageQueue;
 
 public class NetworkServerInterface implements ServerInterface
@@ -88,14 +86,8 @@ public class NetworkServerInterface implements ServerInterface
 	public void requestLibraryItem(long itemId)
 	{
 		LibraryItemIdData data = new LibraryItemIdData(itemId);
-		Message message = new DataStringMessage<LibraryItemIdData>(MessageTypes.GET_LIBRARY_ITEM, data)
-		{
-			@Override
-			protected DataTransformer<LibraryItemIdData, String> createEncoder()
-			{
-				return new DataStructJacksonEncoder<LibraryItemIdData>();
-			}
-		};
+		
+		Message message = new JacksonObjectMessage<LibraryItemIdData>(MessageTypes.GET_LIBRARY_ITEM, data);
 		
 		messageInterface.sendMessage(message);
 	}
@@ -104,14 +96,8 @@ public class NetworkServerInterface implements ServerInterface
 	public void addLibraryItemToPlaylist(long itemId)
 	{
 		MultimediaItemIdData data = new MultimediaItemIdData(itemId);
-		Message message = new DataStringMessage<MultimediaItemIdData>(MessageTypes.ADD_LIBRARY_ITEM_TO_PLAYLIST, data)
-		{
-			@Override
-			protected DataTransformer<MultimediaItemIdData, String> createEncoder()
-			{
-				return new DataStructJacksonEncoder<MultimediaItemIdData>();
-			}
-		};
+		
+		Message message = new JacksonObjectMessage<MultimediaItemIdData>(MessageTypes.ADD_LIBRARY_ITEM_TO_PLAYLIST, data);
 		
 		messageInterface.sendMessage(message);
 	}
@@ -136,7 +122,7 @@ public class NetworkServerInterface implements ServerInterface
 		}
 	}
 	
-	private class GetPlayerStateReceiver extends JacksonMessageReceiver<GetPlayerStateResponse>
+	private class GetPlayerStateReceiver extends JacksonObjectMessageReceiver<GetPlayerStateResponse>
 	{
 		public GetPlayerStateReceiver(MessageQueue messageQueue)
 		{
@@ -157,7 +143,7 @@ public class NetworkServerInterface implements ServerInterface
 		}
 	}
 	
-	private class GetPlaylistReceiver extends JacksonMessageReceiver<GetPlaylistResponse>
+	private class GetPlaylistReceiver extends JacksonObjectMessageReceiver<GetPlaylistResponse>
 	{
 		public GetPlaylistReceiver(MessageQueue messageQueue)
 		{
@@ -176,7 +162,7 @@ public class NetworkServerInterface implements ServerInterface
 		}
 	}
 	
-	private class AddMultimediaToPlaylistReceiver extends JacksonMessageReceiver<AddLibraryItemToPlaylistResponse>
+	private class AddMultimediaToPlaylistReceiver extends JacksonObjectMessageReceiver<AddLibraryItemToPlaylistResponse>
 	{
 		public AddMultimediaToPlaylistReceiver(MessageQueue messageQueue)
 		{
@@ -196,7 +182,7 @@ public class NetworkServerInterface implements ServerInterface
 		}
 	}
 	
-	private class GetLibraryItemReceiver extends JacksonMessageReceiver<GetLibraryItemResponse>
+	private class GetLibraryItemReceiver extends JacksonObjectMessageReceiver<GetLibraryItemResponse>
 	{
 		public GetLibraryItemReceiver(MessageQueue messageQueue)
 		{
@@ -215,7 +201,7 @@ public class NetworkServerInterface implements ServerInterface
 		}
 	}
 	
-	private class GetServerInfoReceiver extends JacksonMessageReceiver<GetServerInfoResponse>
+	private class GetServerInfoReceiver extends JacksonObjectMessageReceiver<GetServerInfoResponse>
 	{
 		public GetServerInfoReceiver(MessageQueue messageQueue)
 		{
