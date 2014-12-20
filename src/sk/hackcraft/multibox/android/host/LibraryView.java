@@ -1,5 +1,6 @@
 package sk.hackcraft.multibox.android.host;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -10,6 +11,7 @@ import sk.hackcraft.util.KeyGenerator;
 import sk.hackcraft.util.UniqueLongKeyGenerator;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.MediaStore;
 
 public class LibraryView implements Library
@@ -37,38 +39,27 @@ public class LibraryView implements Library
 	
 	private HashSet<LibraryEventListener> listeners = new HashSet<Library.LibraryEventListener>();
 
-	public LibraryView()
+	private ContentResolver contentResolver;
+	
+	public LibraryView(ContentResolver contentResolver)
 	{
+		this.contentResolver = contentResolver;
+		
 		newItemListener.onNewItem(rootItem);
 	}
 
-	public void load(ContentResolver contentResolver)
+	public void load()
 	{
 		HashSet<Song> songs = new HashSet<Song>();
 
 		Cursor cursor = contentResolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
 		if (cursor != null && cursor.moveToFirst())
 		{
-			int titleColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.TITLE);
-			int artistColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ARTIST);
-			int pathColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.DATA);
-			int albumColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ALBUM);
-			int durationColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.DURATION);
-
 			do
 			{
-				String artistName = cursor.getString(artistColumn);
-				String albumName = cursor.getString(albumColumn);
-				String title = cursor.getString(titleColumn);
-
-				String path = cursor.getString(pathColumn);
-
-				long duration = cursor.getLong(durationColumn);
-				int length = (int) Math.round(duration / (double) 1000);
-
-				Song song = new Song(idGenerator.generateKey(), artistName, albumName, title, length, path);
-				songs.add(song);
-			} while (cursor.moveToNext());
+				songs.add(createSongFromCursor(cursor));
+			}
+			while (cursor.moveToNext());
 		}
 		cursor.close();
 
@@ -76,15 +67,60 @@ public class LibraryView implements Library
 		{
 			for (Song song : songs)
 			{
-				Artist artist = getOrCreateArtist(song.getArtistName());
-				Album album = artist.getOrCreateAlbum(idGenerator, newItemListener, song.getAlbumName());
-				album.addItem(song);
-
-				newItemListener.onNewItem(song);
+				handleNewSong(song);
 			}
 		}
 	}
 
+	private Song createSongFromCursor(Cursor cursor) {
+		int titleColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.TITLE);
+		int artistColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ARTIST);
+		int pathColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.DATA);
+		int albumColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ALBUM);
+		int durationColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.DURATION);
+
+		String artistName = cursor.getString(artistColumn);
+		String albumName = cursor.getString(albumColumn);
+		String title = cursor.getString(titleColumn);
+
+		String path = cursor.getString(pathColumn);
+
+		long duration = cursor.getLong(durationColumn);
+		int length = (int) Math.round(duration / (double) 1000);
+
+		return new Song(idGenerator.generateKey(), artistName, albumName, title, length, path);
+	}
+	
+	private void handleNewSong(Song song) {
+		Artist artist = getOrCreateArtist(song.getArtistName());
+		Album album = artist.getOrCreateAlbum(idGenerator, newItemListener, song.getAlbumName());
+		album.addItem(song);
+
+		newItemListener.onNewItem(song);
+	}
+	
+	public Song upload(File file) {
+		Cursor cursor = contentResolver.query(Uri.fromFile(file), null, null, null, null);
+		
+		Song song = null;
+		
+		if (cursor != null && cursor.moveToFirst())
+		{
+			do
+			{
+				song = createSongFromCursor(cursor);
+			}
+			while (cursor.moveToNext());
+		}
+		cursor.close();
+		
+		synchronized(this) {
+			handleNewSong(song);
+		}
+		
+		return song;
+	}
+	
 	private Artist getOrCreateArtist(String name)
 	{
 		if (!artists.containsKey(name))

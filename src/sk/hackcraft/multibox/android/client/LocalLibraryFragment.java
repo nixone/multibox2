@@ -1,6 +1,5 @@
 package sk.hackcraft.multibox.android.client;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import android.os.Bundle;
@@ -58,7 +57,7 @@ public class LocalLibraryFragment extends LibraryFragment
 		
 	}
 	
-	private LibraryView library = new LibraryView();
+	private LibraryView library;
 	private Playlist serverPlaylist = null;
 	private Playlist localPlaylistShadow = null;
 	private Server server = null;
@@ -69,7 +68,8 @@ public class LocalLibraryFragment extends LibraryFragment
 		serverPlaylist = server.getPlaylist();
 		localPlaylistShadow = new LocalPlaylistShadow();
 		
-		library.load(getActivity().getContentResolver());
+		library = new LibraryView(getActivity().getContentResolver());
+		library.load();
 		
 		super.onCreate(savedInstanceState);
 	}

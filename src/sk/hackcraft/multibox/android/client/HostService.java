@@ -14,6 +14,7 @@ import sk.hackcraft.multibox.net.host.handlers.GetPlayerStateHandler;
 import sk.hackcraft.multibox.net.host.handlers.GetPlaylistHandler;
 import sk.hackcraft.multibox.net.host.handlers.GetServerInfoHandler;
 import sk.hackcraft.multibox.net.host.handlers.PingHandler;
+import sk.hackcraft.multibox.net.host.handlers.UploadMultimediaHandler;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -43,8 +44,8 @@ public class HostService extends Service
 		player = new Player();
 		player.pause();
 		
-		library = new LibraryView();
-		library.load(getContentResolver());
+		library = new LibraryView(getContentResolver());
+		library.load();
 		
 		host = new Host(NetworkStandards.SOCKET_PORT);
 		host.setMessageHandler(MessageTypes.ADD_LIBRARY_ITEM_TO_PLAYLIST, new AddLibraryItemToPlaylistHandler(library, player));
@@ -53,6 +54,7 @@ public class HostService extends Service
 		host.setMessageHandler(MessageTypes.GET_PLAYLIST, new GetPlaylistHandler(player));
 		host.setMessageHandler(MessageTypes.GET_SERVER_INFO, new GetServerInfoHandler(android.os.Build.MODEL));
 		host.setMessageHandler(MessageTypes.PING, new PingHandler());
+		host.setMessageHandler(MessageTypes.UPLOAD_MULTIMEDIA, new UploadMultimediaHandler(MessageTypes.UPLOAD_MULTIMEDIA, library, getApplicationContext()));
 		
 		try {
 			host.start(new ThreadFactory()
