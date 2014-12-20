@@ -1,5 +1,6 @@
 package sk.hackcraft.multibox2.model.libraryitems;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import sk.hackcraft.multibox2.model.LibraryItem;
@@ -9,9 +10,18 @@ import sk.hackcraft.multibox2.net.serializers.LibraryItemDeserializer;
 @JsonDeserialize(using = LibraryItemDeserializer.class)
 public class MultimediaItem implements LibraryItem
 {
-	private final long id;
-	private final String name;
-	private final int length;
+	@JsonProperty
+	private long id;
+	
+	@JsonProperty
+	private String name;
+	
+	@JsonProperty
+	private int length;
+	
+	protected MultimediaItem() {
+		// for jackson
+	}
 	
 	public MultimediaItem(long id, String name, int length)
 	{

@@ -14,6 +14,10 @@ public class GetPlaylistResponse
 	@JsonProperty
 	private List<MultimediaItem> playlist;
 	
+	protected GetPlaylistResponse() {
+		// empty for jackson
+	}
+	
 	public GetPlaylistResponse(Collection<? extends MultimediaItem> playlist) {
 		this.playlist = new ArrayList<MultimediaItem>(playlist);
 	}

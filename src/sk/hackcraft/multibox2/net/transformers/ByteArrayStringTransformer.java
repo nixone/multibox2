@@ -22,6 +22,10 @@ public class ByteArrayStringTransformer implements DataTransformer<byte[], Strin
 	@Override
 	public String transform(byte[] output)
 	{
+		if(output.length == 0) {
+			return "";
+		}
+		
 		try {
 			DataInputStream input = new DataInputStream(new ByteArrayInputStream(output));
 			

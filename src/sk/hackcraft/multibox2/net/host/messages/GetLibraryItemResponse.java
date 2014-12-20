@@ -10,6 +10,10 @@ public class GetLibraryItemResponse
 	@JsonProperty
 	private LibraryItem libraryItem;
 	
+	protected GetLibraryItemResponse() {
+		// empty for jackson
+	}
+	
 	public GetLibraryItemResponse(LibraryItem libraryItem) {
 		this.libraryItem = libraryItem;
 	}

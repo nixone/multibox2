@@ -2,6 +2,8 @@ package sk.hackcraft.multibox2.android.host;
 
 import java.util.HashMap;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import sk.hackcraft.multibox2.android.host.LibraryView.NewItemListener;
 import sk.hackcraft.multibox2.model.libraryitems.DirectoryItem;
 import sk.hackcraft.util.KeyGenerator;

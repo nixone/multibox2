@@ -8,6 +8,10 @@ public class GetServerInfoResponse
 	@JsonProperty
 	private String serverName;
 	
+	protected GetServerInfoResponse() {
+		// empty for jackson
+	}
+	
 	public GetServerInfoResponse(String serverName) {
 		this.serverName = serverName;
 	}

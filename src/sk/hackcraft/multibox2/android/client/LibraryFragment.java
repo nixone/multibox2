@@ -237,7 +237,7 @@ public abstract class LibraryFragment extends Fragment implements BackPressedLis
 		
 		contentAdapter.clear();
 		
-		List<LibraryItem> items = directory.getItems();
+		List<LibraryItem> items = directory.getEnclosedItems();
 		contentAdapter.addAll(items);
 		
 		contentAdapter.notifyDataSetChanged();

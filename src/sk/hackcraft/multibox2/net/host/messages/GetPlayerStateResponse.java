@@ -16,6 +16,10 @@ public class GetPlayerStateResponse
 	@JsonProperty
 	private boolean playing;
 	
+	protected GetPlayerStateResponse() {
+		// empty for jackson
+	}
+	
 	public GetPlayerStateResponse(MultimediaItem multimedia, int playbackPosition, boolean playing) {
 		this.multimedia = multimedia;
 		this.playbackPosition = playbackPosition;

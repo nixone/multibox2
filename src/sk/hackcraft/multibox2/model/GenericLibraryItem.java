@@ -1,11 +1,23 @@
 package sk.hackcraft.multibox2.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class GenericLibraryItem implements LibraryItem
 {
-	private final long id;
-	private final LibraryItemType type;
-	private final String name;
+	@JsonProperty
+	private long id;
+	
+	@JsonProperty
+	private LibraryItemType type;
+	
+	@JsonProperty
+	private String name;
 
+	protected GenericLibraryItem() {
+		// for jackson
+	}
+	
 	public GenericLibraryItem(long id, LibraryItemType type, String name)
 	{
 		this.id = id;
@@ -14,18 +26,21 @@ public class GenericLibraryItem implements LibraryItem
 	}
 	
 	@Override
+	@JsonIgnore
 	public long getId()
 	{
 		return id;
 	}
 	
 	@Override
+	@JsonIgnore
 	public LibraryItemType getType()
 	{
 		return type;
 	}
 
 	@Override
+	@JsonIgnore
 	public String getName()
 	{
 		return name;

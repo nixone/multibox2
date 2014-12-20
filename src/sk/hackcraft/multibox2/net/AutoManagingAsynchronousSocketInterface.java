@@ -341,6 +341,7 @@ public class AutoManagingAsynchronousSocketInterface implements AsynchronousMess
 				catch (IOException e)
 				{
 					log.print("Receive worker problem: " + e.getMessage());
+					e.printStackTrace();
 					
 					if (!Thread.currentThread().isInterrupted())
 					{

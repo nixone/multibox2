@@ -13,6 +13,10 @@ public class AddLibraryItemToPlaylistResponse
 	@JsonProperty
 	private MultimediaItem multimedia;
 	
+	protected AddLibraryItemToPlaylistResponse() {
+		// empty for jackson
+	}
+	
 	public AddLibraryItemToPlaylistResponse(boolean result, MultimediaItem multimedia) {
 		this.result = result;
 		this.multimedia = multimedia;
