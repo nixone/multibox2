@@ -8,7 +8,7 @@
 
 	<fragment
     	android:id="@+id/fragment_library_directory"
-    	android:name="sk.hackcraft.multibox2.android.client.LibraryFragment"
+    	android:name="sk.hackcraft.multibox.android.client.LibraryFragment"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"
     	tools:layout="@layout/fragment_library" />

@@ -22,9 +22,7 @@
     <string name="title_direct_server_connect">Direct connect</string>
     <string name="title_last_selected_servers">History</string>
     <string name="hint_server_address">Server address</string>
-    <string name="title_activity_test">TestActivity</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_test_host">TestHostActivity</string>
     <string name="title_discovered_servers">Nearby</string>
     <string name="local_server">Play here</string>
     <string name="library_local">Local</string>

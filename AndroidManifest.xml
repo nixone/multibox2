@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="sk.hackcraft.multibox2.android.client"
+    package="sk.hackcraft.multibox.android.client"
     android:versionCode="2"
     android:versionName="2.0" >
 
@@ -12,12 +12,12 @@
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     
     <application
-        android:name=".MultiBoxApplication"
+        android:name="sk.hackcraft.multibox.android.client.MultiBoxApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:theme="@style/AppTheme" android:label="MultiBox2">
+        android:theme="@style/AppTheme" android:label="MultiBox">
         <activity
-            android:name=".ServerSelectActivity" 
+            android:name="sk.hackcraft.multibox.android.client.ServerSelectActivity" 
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
@@ -27,12 +27,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="sk.hackcraft.multibox2.android.client.MainActivity"
+            android:name="sk.hackcraft.multibox.android.client.MainActivity"
             android:label="" />
-        <activity
-            android:name="sk.hackcraft.multibox2.android.client.TestHostActivity"
-            android:label="" />
-        <service android:name=".HostService" />
+        <service android:name="sk.hackcraft.multibox.android.client.HostService" />
     </application>
 
 </manifest>

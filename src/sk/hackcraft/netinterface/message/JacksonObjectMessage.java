@@ -1,9 +1,9 @@
 package sk.hackcraft.netinterface.message;
 
-import sk.hackcraft.multibox2.net.transformers.JacksonStringTransformer;
-import sk.hackcraft.multibox2.net.transformers.JoinTransformer;
-import sk.hackcraft.multibox2.net.transformers.StringByteArrayTransformer;
 import sk.hackcraft.netinterface.message.transformer.DataTransformer;
+import sk.hackcraft.netinterface.message.transformer.JacksonStringTransformer;
+import sk.hackcraft.netinterface.message.transformer.JoinTransformer;
+import sk.hackcraft.netinterface.message.transformer.StringByteArrayTransformer;
 
 public class JacksonObjectMessage<T> extends ObjectMessage<T>
 {
