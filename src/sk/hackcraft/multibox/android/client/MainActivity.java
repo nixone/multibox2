@@ -20,7 +20,7 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends Activity implements BackPressedEvent
+public class MainActivity extends KeepHostServiceActivity implements BackPressedEvent
 {
 	private static final String SAVED_STATE_KEY_ACTIVE_TAB = "activeTab";
 	private static final String SAVED_STATE_KEY_SERVER_NAME = "serverName";

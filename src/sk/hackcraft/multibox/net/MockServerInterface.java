@@ -358,11 +358,11 @@ public class MockServerInterface implements ServerInterface
 			startPlaying();
 		}
 	}
-	/*
+	
 	@Override
-	public void uploadMultimedia(Song multimedia)
+	public void uploadMultimedia(byte[] multimediaData)
 	{
 		// TODO Remove
 		throw new UnsupportedOperationException("Mockup doesn't allow to upload multimedia");
-	}*/
+	}
 }

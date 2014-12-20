@@ -19,7 +19,7 @@ public interface ServerInterface
 	
 	public void requestLibraryItem(long itemId);
 	public void addLibraryItemToPlaylist(long itemId);
-	//public void uploadMultimedia(Song multimedia);
+	public void uploadMultimedia(byte[] multimediaData);
 	
 	public interface ServerInterfaceEventListener
 	{
@@ -34,7 +34,7 @@ public interface ServerInterface
 		
 		public void onAddingLibraryItemToPlaylistResult(boolean result, MultimediaItem multimedia);
 		
-		//public void onMultimediaUploaded(long itemId);
+		public void onMultimediaUploaded(long uploadedMultimediaItemId);
 	}
 	
 	public class ServerInterfaceEventAdapter implements ServerInterfaceEventListener
@@ -68,10 +68,10 @@ public interface ServerInterface
 		public void onAddingLibraryItemToPlaylistResult(boolean result, MultimediaItem multimedia)
 		{
 		}
-		/*
+
 		@Override
-		public void onMultimediaUploaded(long itemId) {
-			
-		}*/
+		public void onMultimediaUploaded(long uploadedMultimediaItemId)
+		{
+		}
 	}
 }

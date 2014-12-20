@@ -1,5 +1,6 @@
 package sk.hackcraft.multibox.net;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,12 +13,14 @@ import sk.hackcraft.multibox.net.messages.GetLibraryItemResponse;
 import sk.hackcraft.multibox.net.messages.GetPlayerStateResponse;
 import sk.hackcraft.multibox.net.messages.GetPlaylistResponse;
 import sk.hackcraft.multibox.net.messages.GetServerInfoResponse;
+import sk.hackcraft.multibox.net.messages.UploadMultimediaResponse;
 import sk.hackcraft.netinterface.connection.AsynchronousMessageInterface;
 import sk.hackcraft.netinterface.connection.AsynchronousMessageInterface.SeriousErrorListener;
 import sk.hackcraft.netinterface.message.EmptyMessage;
 import sk.hackcraft.netinterface.message.JacksonObjectMessage;
 import sk.hackcraft.netinterface.message.JacksonObjectMessageReceiver;
 import sk.hackcraft.netinterface.message.Message;
+import sk.hackcraft.netinterface.message.MessageType;
 import sk.hackcraft.util.MessageQueue;
 
 public class NetworkServerInterface implements ServerInterface
@@ -41,6 +44,7 @@ public class NetworkServerInterface implements ServerInterface
 		messageInterface.setMessageReceiver(MessageTypes.ADD_LIBRARY_ITEM_TO_PLAYLIST, new AddMultimediaToPlaylistReceiver(messageQueue));
 		messageInterface.setMessageReceiver(MessageTypes.GET_LIBRARY_ITEM, new GetLibraryItemReceiver(messageQueue));
 		messageInterface.setMessageReceiver(MessageTypes.GET_SERVER_INFO, new GetServerInfoReceiver(messageQueue));
+		messageInterface.setMessageReceiver(MessageTypes.UPLOAD_MULTIMEDIA, new UploadMultimediaReceiver(messageQueue));
 	}
 	
 	@Override
@@ -98,6 +102,27 @@ public class NetworkServerInterface implements ServerInterface
 		AddLibraryItemToPlaylistRequest data = new AddLibraryItemToPlaylistRequest(itemId);
 		
 		Message message = new JacksonObjectMessage<AddLibraryItemToPlaylistRequest>(MessageTypes.ADD_LIBRARY_ITEM_TO_PLAYLIST, data);
+		
+		messageInterface.sendMessage(message);
+	}
+	
+	@Override
+	public void uploadMultimedia(final byte[] multimediaData)
+	{
+		Message message = new Message()
+		{
+			@Override
+			public MessageType getType()
+			{
+				return MessageTypes.UPLOAD_MULTIMEDIA;
+			}
+			
+			@Override
+			public byte[] getContent() throws IOException
+			{
+				return multimediaData;
+			}
+		};
 		
 		messageInterface.sendMessage(message);
 	}
@@ -217,6 +242,26 @@ public class NetworkServerInterface implements ServerInterface
 			for (ServerInterfaceEventListener listener : listenersCopy)
 			{
 				listener.onServerInfoReceived(serverName);
+			}
+		}
+	}
+	
+	private class UploadMultimediaReceiver extends JacksonObjectMessageReceiver<UploadMultimediaResponse>
+	{
+		public UploadMultimediaReceiver(MessageQueue messageQueue)
+		{
+			super(messageQueue, UploadMultimediaResponse.class);
+		}
+
+		@Override
+		protected void onResult(UploadMultimediaResponse result)
+		{
+			final long uploadedMultimediaId = result.getMultimediaId();
+			
+			List<ServerInterfaceEventListener> listenersCopy = new LinkedList<ServerInterfaceEventListener>(serverListeners);
+			for (ServerInterfaceEventListener listener : listenersCopy)
+			{
+				listener.onMultimediaUploaded(uploadedMultimediaId);
 			}
 		}
 	}

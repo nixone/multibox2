@@ -35,6 +35,26 @@ public class HostService extends Service
 	private LibraryView library = null;
 	private Host host = null;
 	
+	private int numberOfConnectedActivities = 0;
+	
+	public void notifyOfConnectedActivity() {
+		numberOfConnectedActivities++;
+		
+		// first activity appeared
+		if(numberOfConnectedActivities == 1) {
+			player.play();
+		}
+	}
+	
+	public void notifyOfDisconnectedActivity() {
+		numberOfConnectedActivities--;
+		
+		// last activity disappeared
+		if(numberOfConnectedActivities == 0) {
+			player.pause();
+		}
+	}
+	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if(player != null) {
@@ -101,4 +121,5 @@ public class HostService extends Service
 	public LibraryView getLibrary() {
 		return library;
 	}
+
 }

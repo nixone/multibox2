@@ -1,6 +1,7 @@
 package sk.hackcraft.multibox.android.host;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -11,6 +12,7 @@ import sk.hackcraft.util.KeyGenerator;
 import sk.hackcraft.util.UniqueLongKeyGenerator;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
 
@@ -55,9 +57,15 @@ public class LibraryView implements Library
 		Cursor cursor = contentResolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
 		if (cursor != null && cursor.moveToFirst())
 		{
+			int isMusicColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.IS_MUSIC);
+			
 			do
 			{
-				songs.add(createSongFromCursor(cursor));
+				boolean isMusic = cursor.getInt(isMusicColumn) != 0;
+				
+				if(isMusic) {
+					songs.add(createSongFromCursor(cursor));
+				}
 			}
 			while (cursor.moveToNext());
 		}
@@ -67,7 +75,8 @@ public class LibraryView implements Library
 		{
 			for (Song song : songs)
 			{
-				handleNewSong(song);
+				putSongIntoStructure(song);
+				registerNewSong(song);
 			}
 		}
 	}
@@ -91,31 +100,34 @@ public class LibraryView implements Library
 		return new Song(idGenerator.generateKey(), artistName, albumName, title, length, path);
 	}
 	
-	private void handleNewSong(Song song) {
+	private void putSongIntoStructure(Song song) {
 		Artist artist = getOrCreateArtist(song.getArtistName());
 		Album album = artist.getOrCreateAlbum(idGenerator, newItemListener, song.getAlbumName());
 		album.addItem(song);
-
+	}
+	
+	private void registerNewSong(Song song) {
 		newItemListener.onNewItem(song);
 	}
 	
-	public Song upload(File file) {
-		Cursor cursor = contentResolver.query(Uri.fromFile(file), null, null, null, null);
+	private Song createSongFromFile(File file) throws IOException {
+		MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+		retriever.setDataSource(file.getAbsolutePath());
 		
-		Song song = null;
+		String artistName = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+		String albumName = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+		String title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+		long duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+		int length = (int) Math.round(duration / (double) 1000);
 		
-		if (cursor != null && cursor.moveToFirst())
-		{
-			do
-			{
-				song = createSongFromCursor(cursor);
-			}
-			while (cursor.moveToNext());
-		}
-		cursor.close();
+		return new Song(idGenerator.generateKey(), artistName, albumName, title, length, file.getAbsolutePath());
+	}
+	
+	public Song upload(File file) throws IOException {
+		Song song = createSongFromFile(file);
 		
 		synchronized(this) {
-			handleNewSong(song);
+			registerNewSong(song);
 		}
 		
 		return song;

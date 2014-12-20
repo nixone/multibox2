@@ -1,6 +1,7 @@
 package sk.hackcraft.multibox.android.client.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -17,5 +18,15 @@ public class FileUtil
 		output.close();
 		
 		return outputFile;
+	}
+	
+	static public byte[] readFile(File file) throws IOException {
+		FileInputStream stream = new FileInputStream(file);
+		
+		byte[] result = new byte[(int)file.length()];
+		stream.read(result);
+		stream.close();
+		
+		return result;
 	}
 }

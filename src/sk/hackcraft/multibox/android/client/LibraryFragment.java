@@ -42,7 +42,7 @@ public abstract class LibraryFragment extends Fragment implements BackPressedLis
 	private BackPressedListener backPressedListener;
 	
 	public abstract Library getLibrary();
-	public abstract Playlist getPlaylist();
+	public abstract void onMultimediaItemSelected(long multimediaId);
 	
 	@Override
 	public void onAttach(Activity activity)
@@ -77,7 +77,6 @@ public abstract class LibraryFragment extends Fragment implements BackPressedLis
 		
 		Activity activity = getActivity();
 		library = getLibrary();
-		playlist = getPlaylist();
 		
 		libraryListener = new LibraryListener();
 		library.registerLibraryEventListener(libraryListener);
@@ -135,7 +134,8 @@ public abstract class LibraryFragment extends Fragment implements BackPressedLis
 						String messageTemplate = getString(R.string.notice_queying_multimedia);
 						String message = String.format(messageTemplate, item.getName());
 						Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-						playlist.addItem(itemId);
+						
+						onMultimediaItemSelected(itemId);
 						break;
 					case BACK_NAVIGATION:
 						navigateBack();
@@ -287,7 +287,6 @@ public abstract class LibraryFragment extends Fragment implements BackPressedLis
 		{
 			if (item.getType() == LibraryItemType.DIRECTORY)
 			{
-				Log.d("MAINACTIVITY", "Received directory "+item);
 				DirectoryItem directory = (DirectoryItem)item;
 				setDirectory(directory);
 			}

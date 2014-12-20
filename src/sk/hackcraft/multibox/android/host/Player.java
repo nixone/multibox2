@@ -92,6 +92,7 @@ public class Player implements OnCompletionListener
 			}
 			if(playingSong != null && !mediaPlayer.isPlaying()) {
 				mediaPlayer.start();
+				
 				return;
 			}
 	

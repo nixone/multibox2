@@ -1,23 +1,16 @@
 package sk.hackcraft.multibox.android.client;
 
-import java.net.InetAddress;
 import java.util.List;
 
-import sk.hackcraft.multibox.android.client.HostService.ProvidingBinder;
 import sk.hackcraft.multibox.android.client.util.ActivityTransitionAnimator;
 import sk.hackcraft.multibox.android.client.util.HostDiscovery.DiscoveryListener;
 import sk.hackcraft.multibox.model.Server;
 import sk.hackcraft.multibox.util.SelectedServersStorage;
 import sk.hackcraft.multibox.util.SelectedServersStorage.ServerEntry;
 import sk.hackcraft.multibox.android.client.R;
-import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +20,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class ServerSelectActivity extends Activity
+public class ServerSelectActivity extends KeepHostServiceActivity
 {
 	static public final String TAG = ServerSelectActivity.class.getName();
 	
@@ -44,8 +37,6 @@ public class ServerSelectActivity extends Activity
 	private Button localServerButton;
 
 	private SelectedServersStorage lastServersStorage;
-	
-	private HostServiceConnection hostServiceConnection = new HostServiceConnection();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -85,8 +76,6 @@ public class ServerSelectActivity extends Activity
 			}
 		});
 		
-		
-		
 		disconnectNotification = findViewById(R.id.disconnect_notification);
 		
 		lastServersList = (LinearLayout)findViewById(R.id.last_servers_list);
@@ -122,16 +111,8 @@ public class ServerSelectActivity extends Activity
 				onManualConnectRequested();
 			}
 		});
-		
-		createAndConnectHostService();
 	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		
-		disconnectHostService();
-	}
+
 	
 	@Override
 	protected void onResume()
@@ -218,21 +199,6 @@ public class ServerSelectActivity extends Activity
 
 		boolean showDisconnectNotification = disconnectNotification.getVisibility() == View.VISIBLE; 
 		outState.putBoolean(SAVED_STATE_KEY_DISCONNECT_NOTIFICATION, showDisconnectNotification);
-	}
-
-	private void createAndConnectHostService() {
-		Log.e(TAG, "Starting and connecting the host service...");
-		startService(new Intent(this, HostService.class));
-		bindService(new Intent(this, HostService.class), hostServiceConnection, Context.BIND_AUTO_CREATE);
-	}
-	
-	private void disconnectHostService() {
-		Log.e(TAG, "Disconnecting host service");
-		if(hostServiceConnection.serviceBound) {
-			hostServiceConnection.service.getPlayer().pause();
-			hostServiceConnection.serviceBound = false;
-			unbindService(hostServiceConnection);
-		}
 	}
 	
 	private void createDiscoveredServerView(final String serverAddress, final String serverName) {
@@ -336,26 +302,5 @@ public class ServerSelectActivity extends Activity
 		
 		startActivity(intent);
 		ActivityTransitionAnimator.runStartActivityAnimation(this);
-	}
-	
-	public class HostServiceConnection implements ServiceConnection {
-		private boolean serviceBound = false;
-		private HostService service = null;
-		
-		@Override
-		public void onServiceConnected(ComponentName arg0, IBinder arg1)
-		{
-			serviceBound = true;
-			service = ((ProvidingBinder)arg1).getService();
-			service.getPlayer().play();
-			
-			
-		}
-		
-		@Override
-		public void onServiceDisconnected(ComponentName arg0) {
-			serviceBound = false;
-			service = null;
-		}
 	}
 }

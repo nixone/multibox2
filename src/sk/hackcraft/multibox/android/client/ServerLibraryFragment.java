@@ -29,8 +29,8 @@ public class ServerLibraryFragment extends LibraryFragment
 	}
 
 	@Override
-	public Playlist getPlaylist()
+	public void onMultimediaItemSelected(long multimediaId)
 	{
-		return playlist;
+		playlist.addItem(multimediaId);
 	}
 }
