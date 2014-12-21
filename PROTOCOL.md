@@ -18,6 +18,31 @@ Currently, communication is done through **TCP** socket communication on port **
 
 ### Layer 1 message:
 
+This layer is here just to determine the message type, the content of which is totally undetermined
+and may contain JSON encoded string or even a whole music files. Responsible code on each side should
+be prepared, what data will appear in the message body depending on the message type.
+
  Message Type | Message Body Length | Message Body
-:------------:|:-------------------:|:------------:
- 4 bytes | 4 bytes | N bytes (N = Message Body Length)
+:---:|:---:|:---:
+ 4 byte integer | 4 byte integer | N bytes (N = Message Body Length)
+ 
+### Layer 2 message:
+ 
+Purpose of this layer is to clearly state, how `java.lang.String` is transmitted across streams,
+since classic Java documentation doesn't state that clearly enough with `DataOutputStream.writeUTF()` method.
+ 
+**This data is the body of *Layer 1 message**
+ 
+String Length | String Content
+:---: | :---:
+4 byte integer | `java.lang.String` encoded to bytes with encoding `UTF-8`
+
+### Layer 3 message:
+
+JSON string encoded into *Layer 2 message content*.
+
+### Example of layer 3 -> 2 -> 1 encapsulation
+
+Message Type | Message Body length | String length | JSON Object
+:---: | :---: | :---: | :---:
+4b int. | 4b int. | 4b int. | JSON written as `java.lang.String`
