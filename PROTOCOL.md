@@ -31,7 +31,7 @@ be prepared, what data will appear in the message body depending on the message 
 Purpose of this layer is to clearly state, how `java.lang.String` is transmitted across streams,
 since classic Java documentation doesn't state that clearly enough with `DataOutputStream.writeUTF()` method.
  
-**This data is the body of *Layer 1 message**
+**This data is the body of Layer 1 message**
  
 String Length | String Content
 :---: | :---:
@@ -45,4 +45,5 @@ JSON string encoded into *Layer 2 message content*.
 
 Message Type | Message Body length | String length | JSON Object
 :---: | :---: | :---: | :---:
-4b int. | 4b int. | 4b int. | JSON written as `java.lang.String`
+4b integer | 4b integer | 4b integer | JSON written as `java.lang.String`
+`1` | `6` (4+2 bytes) | `2` (4 bytes) | `{}` (2 bytes)
