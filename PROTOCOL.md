@@ -46,4 +46,49 @@ JSON string encoded into *Layer 2 message content*.
 Message Type | Message Body length | String length | JSON Object
 :---: | :---: | :---: | :---:
 4b integer | 4b integer | 4b integer | JSON written as `java.lang.String`
-`1` | `6` (4+2 bytes) | `2` (4 bytes) | `{}` (2 bytes)
+`1` | `6` | `2` | `{}`
+
+## Data structures
+
+### LibraryItem
+
+```
+{
+	id: (long)<id of library item>,
+	type: (LibraryItemType)<type of library item, uppercase as enum>,
+	name: (string)<human readable name of item>
+}
+```
+
+### Multimedia
+#### extends LibraryItem
+
+```
+{
+	...
+	length: (int)<length of multimedia in seconds>
+}
+```
+
+### Directory
+#### extends LibraryItem
+
+```
+{
+	...,
+	items:
+	[
+		(LibraryItem)<first directory item>,
+		(LibraryItem)<second directory item>,
+		...
+	]
+}
+```
+
+### LibraryItemType
+
+`DIRECTORY` | `MULTIMEDIA`
+
+## Message types
+
+There will be message types
