@@ -54,12 +54,6 @@ public abstract class BackgroundCyclicWorker
 			running = false;
 		}
 		
-		try {
-			worker.join();
-		} catch(InterruptedException e) {
-			// nothing, continue
-		}
-		
 		worker = null;
 	}
 	

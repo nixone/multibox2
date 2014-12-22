@@ -11,7 +11,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+	
     <application
         android:name="sk.hackcraft.multibox.android.client.MultiBoxApplication"
         android:allowBackup="true"
@@ -29,6 +30,9 @@
         </activity>
         <activity
             android:name="sk.hackcraft.multibox.android.client.MainActivity"
+            android:label="" />
+        <activity
+            android:name="sk.hackcraft.multibox.android.client.ControlHostServiceActivity"
             android:label="" />
         <service android:name="sk.hackcraft.multibox.android.client.HostService" />
     </application>

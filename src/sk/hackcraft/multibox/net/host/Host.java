@@ -196,24 +196,16 @@ public class Host
 		}
 	}
 
-	public void stop()
+	public void stop() throws IOException
 	{
 		synchronized (this)
 		{
+			serverSocket.close();
 			running = false;
 		}
 		if(discoveryReceiver != null) {
 			discoveryReceiver.stop();
 			discoveryReceiver = null;
-		}
-		
-		try
-		{
-			acceptThread.join();
-			dataThread.join();
-		} catch (InterruptedException e)
-		{
-			return;
 		}
 	}
 }

@@ -5,7 +5,6 @@ import java.net.Socket;
 
 import sk.hackcraft.multibox.android.client.util.HandlerEventLoop;
 import sk.hackcraft.multibox.android.client.util.JsonCacheSelectedServersStorage;
-import sk.hackcraft.multibox.android.client.util.MockHostDiscovery;
 import sk.hackcraft.multibox.android.client.util.ServerBroadcastHostDiscovery;
 import sk.hackcraft.multibox.android.client.util.SystemLog;
 import sk.hackcraft.multibox.android.client.util.HostDiscovery.DiscoveryListener;

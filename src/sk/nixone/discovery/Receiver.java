@@ -62,4 +62,9 @@ public class Receiver extends BackgroundCyclicWorker
 	{
 	}
 
+	@Override
+	public void stop() {
+		super.stop();
+		listeningSocket.close();
+	}
 }

@@ -112,5 +112,7 @@ public class Broadcaster
 	public void stop() {
 		broadcaster.stop();
 		receiver.stop();
+		
+		broadcastSocket.close();
 	}
 }

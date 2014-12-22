@@ -8,6 +8,7 @@ import sk.hackcraft.multibox.model.Server;
 import sk.hackcraft.multibox.util.SelectedServersStorage;
 import sk.hackcraft.multibox.util.SelectedServersStorage.ServerEntry;
 import sk.hackcraft.multibox.android.client.R;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,7 +21,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class ServerSelectActivity extends KeepHostServiceActivity
+public class ServerSelectActivity extends Activity
 {
 	static public final String TAG = ServerSelectActivity.class.getName();
 	
@@ -43,6 +44,8 @@ public class ServerSelectActivity extends KeepHostServiceActivity
 	{
 		super.onCreate(savedInstanceState);
 		
+		startService(new Intent(this, HostService.class));
+		
 		application = (MultiBoxApplication)getApplication();
 
 		setContentView(R.layout.activity_server_select);
@@ -54,7 +57,7 @@ public class ServerSelectActivity extends KeepHostServiceActivity
 			@Override
 			public void onClick(View arg0)
 			{
-				onServerSelected("localhost");
+				connectToLocalServer();
 			}
 		});
 		
@@ -264,6 +267,12 @@ public class ServerSelectActivity extends KeepHostServiceActivity
 	{
 		String address = serverAddressInputField.getText().toString();
 		connectToServer(address);
+	}
+	
+	private void connectToLocalServer() {
+		Intent intent = new Intent(this, ControlHostServiceActivity.class);
+		intent.putExtra(ControlHostServiceActivity.ACTION_EXTRA_NAME, ControlHostServiceActivity.ACTION_START);
+		startActivity(intent);
 	}
 	
 	private void onServerSelected(String address)

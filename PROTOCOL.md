@@ -12,7 +12,7 @@ should always stay public and accessible.
 *	Messages from one client may arrive from completely different connections.
 *	There is no guarantee, in which order will the server respond to the arriving messages, or in what time.
 
-Currently, communication is done through **TCP** socket communication on port **13110**.
+Currently, communication is done through **TCP** socket on port **13110**.
 
 ## Message encapsulation
 
@@ -48,7 +48,10 @@ Message Type | Message Body length | String length | JSON Object
 4b integer | 4b integer | 4b integer | JSON written as `java.lang.String`
 `1` | `6` | `2` | `{}`
 
-## Data structures
+## JSON Data structures
+
+Across communication and messages, there are some JSON structures, that may appear more than once in 
+message communication, so they are described in this section and used later in message type descriptions.
 
 ### LibraryItem
 
@@ -60,18 +63,16 @@ Message Type | Message Body length | String length | JSON Object
 }
 ```
 
-### Multimedia
-#### extends LibraryItem
+### Multimedia extends LibraryItem
 
 ```
 {
 	...
-	length: (int)<length of multimedia in seconds>
+	length: (integer)<length of multimedia in seconds>
 }
 ```
 
-### Directory
-#### extends LibraryItem
+### Directory extends LibraryItem
 
 ```
 {
@@ -92,3 +93,16 @@ Message Type | Message Body length | String length | JSON Object
 ## Message types
 
 There will be message types
+
+### Get player state (Message type: 1, Layer 3)
+
+Clients sends an empty message *(0 bytes)* to server, and the server responds with it's current player state:
+
+```
+{
+	multimedia: (Multimedia)<actual playing multimedia>,
+	playbackPosition: (integer)<actual playback position>,
+	playing: (boolean)<is player playing or is paused>
+}
+```
+

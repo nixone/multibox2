@@ -15,14 +15,22 @@ import sk.hackcraft.multibox.net.host.handlers.GetPlaylistHandler;
 import sk.hackcraft.multibox.net.host.handlers.GetServerInfoHandler;
 import sk.hackcraft.multibox.net.host.handlers.PingHandler;
 import sk.hackcraft.multibox.net.host.handlers.UploadMultimediaHandler;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class HostService extends Service
-{	
+{
+	static public final int NOTIFICATION_ID = NetworkStandards.SOCKET_PORT;
+	
 	static public final String TAG = HostService.class.getName();
 	
 	public class ProvidingBinder extends Binder {
@@ -34,35 +42,16 @@ public class HostService extends Service
 	private Player player = null;
 	private LibraryView library = null;
 	private Host host = null;
+	private Notification notification = null;
+	private WifiManager.WifiLock acquiredWifiLock = null;
 	
-	private int numberOfConnectedActivities = 0;
-	
-	public void notifyOfConnectedActivity() {
-		numberOfConnectedActivities++;
-		
-		// first activity appeared
-		if(numberOfConnectedActivities == 1) {
-			player.play();
-		}
-	}
-	
-	public void notifyOfDisconnectedActivity() {
-		numberOfConnectedActivities--;
-		
-		// last activity disappeared
-		if(numberOfConnectedActivities == 0) {
-			player.pause();
-		}
-	}
-	
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		if(player != null) {
-			return super.onStartCommand(intent, flags, startId);
+	public void start() {
+		if(host != null) {
+			return;
 		}
 		
 		player = new Player();
-		player.pause();
+		player.play();
 		
 		library = new LibraryView(getContentResolver());
 		library.load();
@@ -87,25 +76,85 @@ public class HostService extends Service
 			});
 		} catch(IOException e) {
 			Log.e(TAG, "Couldnt start local host", e);
+			
+			player.destroy();
+			
 			host = null;
+			return;
 		}
 		
-		return super.onStartCommand(intent, flags, startId);
+		acquireWifiLock();
+		
+		Intent notificationIntent = new Intent(this, ControlHostServiceActivity.class);
+		notificationIntent.putExtra(ControlHostServiceActivity.ACTION_EXTRA_NAME, ControlHostServiceActivity.ACTION_CLOSE);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+		
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder
+			.setSmallIcon(R.drawable.ic_launcher)
+			.setContentIntent(pendingIntent)
+			.setContentText("Click to stop")
+			.setContentTitle("MultiBox Player");
+		
+		notification = builder.build();
+		
+		startForeground(NOTIFICATION_ID, notification);
+	}
+	
+	public void close() {
+		if(host == null) {
+			return;
+		}
+		
+		stopForeground(true);
+		
+		releaseWifiLock();
+		
+		try {
+			host.stop();
+		} catch(IOException e) {
+			e.printStackTrace();
+			// nothing, continue
+		}
+		
+		player.destroy();
+		player = null;
+		host = null;
+		notification = null;
+	}
+	
+	private void acquireWifiLock() {
+		if(acquiredWifiLock != null) {
+			return;
+		}
+		
+		WifiManager wifiManager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+		if(wifiManager != null) {
+			acquiredWifiLock = wifiManager.createWifiLock(HostService.class.getName());
+			acquiredWifiLock.acquire();
+		}
+	}
+	
+	private void releaseWifiLock() {
+		if(acquiredWifiLock == null) {
+			return;
+		}
+		acquiredWifiLock.release();
+		acquiredWifiLock = null;
+	}
+	
+	@Override
+	public void onCreate() {
+		super.onCreate();
+	
+
 	}
 	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		
-		if(player != null) {
-			player.destroy();
-			player = null;
-		}
-		
-		if(host != null) {
-			host.stop();
-			host = null;
-		}
+		acquiredWifiLock = null;
 	}
 	
 	@Override
