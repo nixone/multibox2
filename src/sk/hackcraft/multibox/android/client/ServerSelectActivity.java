@@ -270,9 +270,7 @@ public class ServerSelectActivity extends Activity
 	}
 	
 	private void connectToLocalServer() {
-		Intent intent = new Intent(this, ControlHostServiceActivity.class);
-		intent.putExtra(ControlHostServiceActivity.ACTION_EXTRA_NAME, ControlHostServiceActivity.ACTION_START);
-		startActivity(intent);
+		startActivity(ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_START));
 	}
 	
 	private void onServerSelected(String address)

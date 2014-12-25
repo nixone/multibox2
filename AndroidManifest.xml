@@ -21,7 +21,6 @@
         <activity
             android:name="sk.hackcraft.multibox.android.client.ServerSelectActivity" 
             android:label="@string/app_name"
-            android:noHistory="true"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,6 +32,7 @@
             android:name="sk.hackcraft.multibox.android.client.MainActivity"
             android:label="" />
         <activity
+            android:launchMode="singleTop"
             android:name="sk.hackcraft.multibox.android.client.ControlHostServiceActivity"
             android:label="" />
         <service android:name="sk.hackcraft.multibox.android.client.HostService" />

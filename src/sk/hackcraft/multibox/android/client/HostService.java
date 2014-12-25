@@ -21,7 +21,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
-import android.net.wifi.WifiManager.WifiLock;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -30,32 +29,36 @@ import android.util.Log;
 public class HostService extends Service
 {
 	static public final int NOTIFICATION_ID = NetworkStandards.SOCKET_PORT;
-	
+
 	static public final String TAG = HostService.class.getName();
-	
-	public class ProvidingBinder extends Binder {
-		public HostService getService() {
+
+	public class ProvidingBinder extends Binder
+	{
+		public HostService getService()
+		{
 			return HostService.this;
 		}
 	}
-	
+
 	private Player player = null;
 	private LibraryView library = null;
 	private Host host = null;
 	private Notification notification = null;
 	private WifiManager.WifiLock acquiredWifiLock = null;
 	
-	public void start() {
-		if(host != null) {
+	public void start()
+	{
+		if (host != null)
+		{
 			return;
 		}
-		
+
 		player = new Player();
 		player.play();
-		
+
 		library = new LibraryView(getContentResolver());
 		library.load();
-		
+
 		host = new Host(NetworkStandards.SOCKET_PORT);
 		host.setMessageHandler(MessageTypes.ADD_LIBRARY_ITEM_TO_PLAYLIST, new AddLibraryItemToPlaylistHandler(library, player));
 		host.setMessageHandler(MessageTypes.GET_LIBRARY_ITEM, new GetLibraryItemHandler(library));
@@ -64,8 +67,9 @@ public class HostService extends Service
 		host.setMessageHandler(MessageTypes.GET_SERVER_INFO, new GetServerInfoHandler(android.os.Build.MODEL));
 		host.setMessageHandler(MessageTypes.PING, new PingHandler());
 		host.setMessageHandler(MessageTypes.UPLOAD_MULTIMEDIA, new UploadMultimediaHandler(MessageTypes.UPLOAD_MULTIMEDIA, library, getApplicationContext()));
-		
-		try {
+
+		try
+		{
 			host.start(new ThreadFactory()
 			{
 				@Override
@@ -74,100 +78,125 @@ public class HostService extends Service
 					return new Thread(r);
 				}
 			});
-		} catch(IOException e) {
+		} catch (IOException e)
+		{
 			Log.e(TAG, "Couldnt start local host", e);
-			
+
 			player.destroy();
-			
+
 			host = null;
 			return;
 		}
-		
+
 		acquireWifiLock();
+
+		Intent closeIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_CLOSE);
 		
-		Intent notificationIntent = new Intent(this, ControlHostServiceActivity.class);
-		notificationIntent.putExtra(ControlHostServiceActivity.ACTION_EXTRA_NAME, ControlHostServiceActivity.ACTION_CLOSE);
-		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-		
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, closeIntent, 0);
+
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder
-			.setSmallIcon(R.drawable.ic_launcher)
-			.setContentIntent(pendingIntent)
-			.setContentText("Click to stop")
-			.setContentTitle("MultiBox Player");
-		
+		builder.setSmallIcon(R.drawable.ic_launcher).setContentIntent(pendingIntent).setContentText("Click to stop").setContentTitle("MultiBox Player");
+
 		notification = builder.build();
-		
+
 		startForeground(NOTIFICATION_ID, notification);
 	}
-	
-	public void close() {
-		if(host == null) {
+
+	public void close()
+	{
+		if (host == null)
+		{
 			return;
 		}
-		
+
 		stopForeground(true);
-		
+
 		releaseWifiLock();
-		
-		try {
+
+		try
+		{
 			host.stop();
-		} catch(IOException e) {
+		} catch (IOException e)
+		{
 			e.printStackTrace();
 			// nothing, continue
 		}
-		
+
 		player.destroy();
 		player = null;
 		host = null;
 		notification = null;
 	}
+
+	public void play()
+	{
+		if(player != null)
+		{
+			player.play();
+		}
+	}
 	
-	private void acquireWifiLock() {
-		if(acquiredWifiLock != null) {
+	public void pause()
+	{
+		if(player != null)
+		{
+			player.pause();
+		}
+	}
+
+	private void acquireWifiLock()
+	{
+		if (acquiredWifiLock != null)
+		{
 			return;
 		}
-		
-		WifiManager wifiManager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-		if(wifiManager != null) {
+
+		WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		if (wifiManager != null)
+		{
 			acquiredWifiLock = wifiManager.createWifiLock(HostService.class.getName());
 			acquiredWifiLock.acquire();
 		}
 	}
-	
-	private void releaseWifiLock() {
-		if(acquiredWifiLock == null) {
+
+	private void releaseWifiLock()
+	{
+		if (acquiredWifiLock == null)
+		{
 			return;
 		}
 		acquiredWifiLock.release();
 		acquiredWifiLock = null;
 	}
-	
+
 	@Override
-	public void onCreate() {
+	public void onCreate()
+	{
 		super.onCreate();
-	
 
 	}
-	
+
 	@Override
-	public void onDestroy() {
+	public void onDestroy()
+	{
 		super.onDestroy();
-		
+
 		acquiredWifiLock = null;
 	}
-	
+
 	@Override
 	public IBinder onBind(Intent intent)
 	{
 		return new ProvidingBinder();
 	}
-	
-	public Player getPlayer() {
+
+	public Player getPlayer()
+	{
 		return player;
 	}
-	
-	public LibraryView getLibrary() {
+
+	public LibraryView getLibrary()
+	{
 		return library;
 	}
 

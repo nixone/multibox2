@@ -1,7 +1,8 @@
 package sk.hackcraft.multibox.android.client;
 
+import java.util.LinkedList;
+
 import sk.hackcraft.multibox.android.client.HostService.ProvidingBinder;
-import sk.hackcraft.multibox.android.client.util.ActivityTransitionAnimator;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,73 +15,137 @@ import android.util.Log;
 public class ControlHostServiceActivity extends Activity
 {
 	static private final String TAG = ControlHostServiceActivity.class.getName();
-	
-	final static public String ACTION_EXTRA_NAME = ControlHostServiceActivity.class.getName() + "_ACTION";
 
-	final static private int ACTION_NONE = 0;
-	
-	/**
-	 * This action closes the host and terminates this activity
-	 */
-	final static public int ACTION_CLOSE = 1;
+	static protected final String ACTION_EXTRA_KEY = "actionCode";
 
-	/**
-	 * This action starts the host and redirects the activity to MainActivity
-	 */
-	final static public int ACTION_START = 2;
-	
-	private int actionCode = ACTION_NONE;
+	static protected final int ACTION_NONE = 0;
+	static public final int ACTION_START = 1;
+	static public final int ACTION_PLAY = 2;
+	static public final int ACTION_PAUSE = 3;
+	static public final int ACTION_CLOSE = 4;
+
+	static public Intent createIntent(Context context, int actionCode)
+	{
+		Intent intent = new Intent(context, ControlHostServiceActivity.class);
+		intent.putExtra(ACTION_EXTRA_KEY, actionCode);
+		return intent;
+	}
+
+	private LinkedList<Integer> receivedActionCodes = new LinkedList<Integer>();
 
 	private HostServiceConnection hostServiceConnection = new HostServiceConnection();
-	
-	private MultiBoxApplication application = null;
-	
+
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
+		handleActionIntent(getIntent());
+	}
+	
+	@Override
+	protected void onNewIntent(Intent newIntent)
+	{
+		super.onNewIntent(newIntent);
+		handleActionIntent(newIntent);
+	}
+
+	private void handleActionIntent(Intent intent)
+	{
+		int actionCode = intent.getIntExtra(ACTION_EXTRA_KEY, ACTION_NONE);
+
+		Log.e(TAG, "Received action code " + actionCode);
+
+		receivedActionCodes.add(actionCode);
+
+		processActions();
+	}
+
+	protected void doActionStart()
+	{
+		Log.e(TAG, "Starting");
+		hostServiceConnection.service.start();
 		
-		Intent intent = getIntent();
-		actionCode = intent.getIntExtra(ACTION_EXTRA_NAME, ACTION_NONE);
+		MultiBoxApplication app = (MultiBoxApplication)getApplication();
+		app.createServerConnection("localhost");
 		
-		application = (MultiBoxApplication)getApplication();
-		
+		Intent intent = new Intent(this, MainActivity.class);
+		intent.putExtra(MainActivity.EXTRA_KEY_SERVER_NAME, "Your device");
+		startActivity(intent);
+	}
+
+	protected void doActionPlay()
+	{
+		Log.e(TAG, "Playing");
+		hostServiceConnection.service.play();
+	}
+
+	protected void doActionPause()
+	{
+		Log.e(TAG, "Pausing");
+		hostServiceConnection.service.pause();
+	}
+
+	protected void doActionClose()
+	{
+		Log.e(TAG, "Closing");
+		hostServiceConnection.service.close();
+	}
+
+	private void processActions()
+	{
+		if (!hostServiceConnection.serviceBound)
+		{
+			return;
+		}
+
+		for (int receivedActionCode : receivedActionCodes)
+		{
+			Log.e(TAG, "Received action " + receivedActionCode);
+
+			switch (receivedActionCode)
+			{
+				case ACTION_START:
+					doActionStart();
+					break;
+				case ACTION_PLAY:
+					doActionPlay();
+					break;
+				case ACTION_PAUSE:
+					doActionPause();
+					break;
+				case ACTION_CLOSE:
+					doActionClose();
+					break;
+				case ACTION_NONE:
+				default:
+					break;
+			}
+		}
+		receivedActionCodes.clear();
+	}
+
+	@Override
+	protected void onStart()
+	{
+		super.onStart();
+
 		startService(new Intent(this, HostService.class));
 		bindService(new Intent(this, HostService.class), hostServiceConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	@Override
-	protected void onDestroy()
+	protected void onStop()
 	{
-		if(hostServiceConnection.serviceBound) {
+		if (hostServiceConnection.serviceBound)
+		{
 			hostServiceConnection.serviceBound = false;
 			unbindService(hostServiceConnection);
 		}
-		
-		super.onDestroy();
-	}
-	
-	private void actionClose() {
-		hostServiceConnection.service.close();
-		
-		Intent intent = new Intent(this, ServerSelectActivity.class);
-		startActivityIfNeeded(intent, 0);
-		
-		finish();
-	}
-	
-	private void actionStart() {
-		hostServiceConnection.service.start();
-		application.createServerConnection("localhost");
-		
-		Intent intent = new Intent(this, MainActivity.class);
-		intent.putExtra(MainActivity.EXTRA_KEY_SERVER_NAME, "Your device");
-		startActivity(intent);
-		
-		finish();
+
+		super.onStop();
 	}
 
-	public class HostServiceConnection implements ServiceConnection
+	private class HostServiceConnection implements ServiceConnection
 	{
 		private boolean serviceBound = false;
 		private HostService service = null;
@@ -90,13 +155,11 @@ public class ControlHostServiceActivity extends Activity
 		{
 			serviceBound = true;
 			service = ((ProvidingBinder) arg1).getService();
-			
-			if(actionCode == ACTION_CLOSE) {
-				actionClose();
-			} else if(actionCode == ACTION_START) {
-				actionStart();
-			}
-			actionCode = ACTION_NONE;
+			service.start();
+
+			processActions();
+
+			ControlHostServiceActivity.this.finish();
 		}
 
 		@Override
