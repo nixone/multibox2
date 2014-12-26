@@ -3,6 +3,7 @@ package sk.hackcraft.multibox.android.client;
 import java.util.LinkedList;
 
 import sk.hackcraft.multibox.android.client.HostService.ProvidingBinder;
+import sk.hackcraft.multibox.model.Server;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -23,6 +24,7 @@ public class ControlHostServiceActivity extends Activity
 	static public final int ACTION_PLAY = 2;
 	static public final int ACTION_PAUSE = 3;
 	static public final int ACTION_CLOSE = 4;
+	static public final int ACTION_OPEN = 5;
 
 	static public Intent createIntent(Context context, int actionCode)
 	{
@@ -59,7 +61,7 @@ public class ControlHostServiceActivity extends Activity
 
 		processActions();
 	}
-
+	
 	protected void doActionStart()
 	{
 		Log.e(TAG, "Starting");
@@ -91,6 +93,20 @@ public class ControlHostServiceActivity extends Activity
 		hostServiceConnection.service.close();
 	}
 
+	protected void doActionOpen()
+	{
+		Log.e(TAG, "Opening");
+		MultiBoxApplication app = (MultiBoxApplication)getApplication();
+		Server server = app.getServer();
+		
+		if(server != null)
+		{
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.putExtra(MainActivity.EXTRA_KEY_SERVER_NAME, "Your device");
+			startActivity(intent);
+		}
+	}
+	
 	private void processActions()
 	{
 		if (!hostServiceConnection.serviceBound)
@@ -115,6 +131,9 @@ public class ControlHostServiceActivity extends Activity
 					break;
 				case ACTION_CLOSE:
 					doActionClose();
+					break;
+				case ACTION_OPEN:
+					doActionOpen();
 					break;
 				case ACTION_NONE:
 				default:

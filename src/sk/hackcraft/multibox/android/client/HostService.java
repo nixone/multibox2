@@ -91,11 +91,24 @@ public class HostService extends Service
 		acquireWifiLock();
 
 		Intent closeIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_CLOSE);
+		Intent openIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_OPEN);
+		Intent playIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_PLAY);
+		Intent pauseIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_PAUSE);
 		
-		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, closeIntent, 0);
+		PendingIntent pendingCloseIntent = PendingIntent.getActivity(this, 1, closeIntent, 0);
+		PendingIntent pendingOpenIntent = PendingIntent.getActivity(this, 2, openIntent, 0);
+		PendingIntent pendingPlayIntent = PendingIntent.getActivity(this, 3, playIntent, 0);
+		PendingIntent pendingPauseIntent = PendingIntent.getActivity(this, 4, pauseIntent, 0);
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder.setSmallIcon(R.drawable.ic_launcher).setContentIntent(pendingIntent).setContentText("Click to stop").setContentTitle("MultiBox Player");
+		builder
+			.setSmallIcon(R.drawable.ic_launcher)
+			.setContentTitle("MultiBox")
+			.setContentText("Playlist is shared")
+			.setContentIntent(pendingOpenIntent)
+			.addAction(R.drawable.play, "Play", pendingPlayIntent)
+			.addAction(R.drawable.pause, "Pause", pendingPauseIntent)
+			.addAction(R.drawable.stop, "Close", pendingCloseIntent);
 
 		notification = builder.build();
 

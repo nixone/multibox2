@@ -32,7 +32,7 @@
             android:name="sk.hackcraft.multibox.android.client.MainActivity"
             android:label="" />
         <activity
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:name="sk.hackcraft.multibox.android.client.ControlHostServiceActivity"
             android:label="" />
         <service android:name="sk.hackcraft.multibox.android.client.HostService" />
