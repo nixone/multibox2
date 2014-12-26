@@ -3,8 +3,10 @@ package sk.hackcraft.multibox.android.client;
 import java.io.IOException;
 import java.util.concurrent.ThreadFactory;
 
+import sk.hackcraft.multibox.android.client.util.HandlerEventLoop;
 import sk.hackcraft.multibox.android.host.LibraryView;
 import sk.hackcraft.multibox.android.host.Player;
+import sk.hackcraft.multibox.android.host.Song;
 import sk.hackcraft.multibox.net.MessageTypes;
 import sk.hackcraft.multibox.net.NetworkStandards;
 import sk.hackcraft.multibox.net.host.Host;
@@ -16,6 +18,7 @@ import sk.hackcraft.multibox.net.host.handlers.GetServerInfoHandler;
 import sk.hackcraft.multibox.net.host.handlers.PingHandler;
 import sk.hackcraft.multibox.net.host.handlers.UploadMultimediaHandler;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -39,12 +42,116 @@ public class HostService extends Service
 			return HostService.this;
 		}
 	}
+	
+	private class PlayerListener implements Player.Listener {
+		private HandlerEventLoop messageQueue = new HandlerEventLoop();
+		private Runnable refreshNotification = new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				refreshNotification();
+			}
+		};
+		
+		@Override
+		public void onSongAdded(Player player, Song song)
+		{
+			messageQueue.post(refreshNotification);
+		}
+
+		@Override
+		public void onSongFinished(Player player, Song song)
+		{
+			messageQueue.post(refreshNotification);
+		}
+
+		@Override
+		public void onSongStarted(Player player, Song song)
+		{
+			messageQueue.post(refreshNotification);
+		}
+	}
 
 	private Player player = null;
 	private LibraryView library = null;
 	private Host host = null;
 	private Notification notification = null;
 	private WifiManager.WifiLock acquiredWifiLock = null;
+	
+	private int nextNotificationActionRequestCode = 1;
+	
+	private Notification buildNotification()
+	{
+		Intent closeIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_CLOSE);
+		Intent openIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_OPEN);
+		Intent playIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_PLAY);
+		Intent pauseIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_PAUSE);
+		
+		PendingIntent pendingCloseIntent = PendingIntent.getActivity(this, nextNotificationActionRequestCode++, closeIntent, 0);
+		PendingIntent pendingOpenIntent = PendingIntent.getActivity(this, nextNotificationActionRequestCode++, openIntent, 0);
+		PendingIntent pendingPlayIntent = PendingIntent.getActivity(this, nextNotificationActionRequestCode++, playIntent, 0);
+		PendingIntent pendingPauseIntent = PendingIntent.getActivity(this, nextNotificationActionRequestCode++, pauseIntent, 0);
+
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder
+			.setSmallIcon(R.drawable.ic_launcher)
+			.setContentTitle("MultiBox")
+			.setContentIntent(pendingOpenIntent);
+			
+		if(player.isPlaying())
+		{
+			Song playingSong = player.getPlayingSong();
+			
+			if(player.getDesiredState() == Player.State.PLAYING)
+			{
+				builder.setContentText(playingSong.getTitle());
+			}
+			else if(player.getDesiredState() == Player.State.PAUSED)
+			{
+				builder.setContentText(playingSong.getTitle()+" (paused)");
+			}
+			
+			builder.setProgress(100, 30, true);
+		}
+		else
+		{
+			builder.setContentText("Not playing.");
+		}
+		
+		switch(player.getDesiredState())
+		{
+			case PLAYING:
+				builder.addAction(R.drawable.pause, "Pause", pendingPauseIntent);
+				break;
+			case PAUSED:
+				builder.addAction(R.drawable.play, "Play", pendingPlayIntent);
+				break;
+		}
+		
+		builder.addAction(R.drawable.stop, "Close", pendingCloseIntent);
+
+		return builder.build();
+	}
+	
+	private void refreshNotification()
+	{
+		Notification buildNotification = buildNotification();
+		
+		if(notification == null)
+		{
+			notification = buildNotification;
+			startForeground(NOTIFICATION_ID, notification);
+		}
+		else
+		{
+			notification = buildNotification;
+			
+			NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+			manager.notify(NOTIFICATION_ID, notification);
+		}
+	}
 	
 	public void start()
 	{
@@ -54,6 +161,7 @@ public class HostService extends Service
 		}
 
 		player = new Player();
+		player.addListener(new PlayerListener());
 		player.play();
 
 		library = new LibraryView(getContentResolver());
@@ -90,29 +198,7 @@ public class HostService extends Service
 
 		acquireWifiLock();
 
-		Intent closeIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_CLOSE);
-		Intent openIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_OPEN);
-		Intent playIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_PLAY);
-		Intent pauseIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_PAUSE);
-		
-		PendingIntent pendingCloseIntent = PendingIntent.getActivity(this, 1, closeIntent, 0);
-		PendingIntent pendingOpenIntent = PendingIntent.getActivity(this, 2, openIntent, 0);
-		PendingIntent pendingPlayIntent = PendingIntent.getActivity(this, 3, playIntent, 0);
-		PendingIntent pendingPauseIntent = PendingIntent.getActivity(this, 4, pauseIntent, 0);
-
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder
-			.setSmallIcon(R.drawable.ic_launcher)
-			.setContentTitle("MultiBox")
-			.setContentText("Playlist is shared")
-			.setContentIntent(pendingOpenIntent)
-			.addAction(R.drawable.play, "Play", pendingPlayIntent)
-			.addAction(R.drawable.pause, "Pause", pendingPauseIntent)
-			.addAction(R.drawable.stop, "Close", pendingCloseIntent);
-
-		notification = builder.build();
-
-		startForeground(NOTIFICATION_ID, notification);
+		refreshNotification();
 	}
 
 	public void close()
@@ -147,6 +233,7 @@ public class HostService extends Service
 		{
 			player.play();
 		}
+		refreshNotification();
 	}
 	
 	public void pause()
@@ -155,6 +242,7 @@ public class HostService extends Service
 		{
 			player.pause();
 		}
+		refreshNotification();
 	}
 
 	private void acquireWifiLock()

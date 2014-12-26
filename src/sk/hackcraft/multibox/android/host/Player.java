@@ -14,7 +14,7 @@ public class Player implements OnCompletionListener
 {
 	static public final String TAG = Player.class.getName();
 	
-	enum State {
+	public enum State {
 		PLAYING, PAUSED;
 	}
 	
@@ -157,6 +157,11 @@ public class Player implements OnCompletionListener
 			mediaPlayer.stop();
 			mediaPlayer.release();
 		}
+	}
+	
+	public State getDesiredState()
+	{
+		return desiredState;
 	}
 	
 	public boolean isPlaying() {

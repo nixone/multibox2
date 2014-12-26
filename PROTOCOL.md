@@ -106,3 +106,4 @@ Clients sends an empty message *(0 bytes)* to server, and the server responds wi
 }
 ```
 
+*TODO This protocol is not finished yet*
