@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,10 +33,10 @@ public class ServerSelectActivity extends Activity
 	private MultiBoxApplication application;
 	
 	private EditText serverAddressInputField;
+	private LinearLayout predefinedServersList;
 	private LinearLayout lastServersList;
 	private LinearLayout discoveredServersList;
 	private View disconnectNotification;
-	private Button localServerButton;
 
 	private SelectedServersStorage lastServersStorage;
 	
@@ -49,17 +50,6 @@ public class ServerSelectActivity extends Activity
 		application = (MultiBoxApplication)getApplication();
 
 		setContentView(R.layout.activity_server_select);
-		
-		localServerButton = (Button)findViewById(R.id.local_server);
-		localServerButton.setOnClickListener(new View.OnClickListener()
-		{
-			
-			@Override
-			public void onClick(View arg0)
-			{
-				connectToLocalServer();
-			}
-		});
 		
 		serverAddressInputField = (EditText)findViewById(R.id.server_address_input_field);
 		serverAddressInputField.setOnEditorActionListener(new TextView.OnEditorActionListener()
@@ -81,9 +71,12 @@ public class ServerSelectActivity extends Activity
 		
 		disconnectNotification = findViewById(R.id.disconnect_notification);
 		
+		predefinedServersList = (LinearLayout)findViewById(R.id.predefined_servers_list);
 		lastServersList = (LinearLayout)findViewById(R.id.last_servers_list);
 		discoveredServersList = (LinearLayout)findViewById(R.id.discovered_servers_list);
-
+		
+		createPredefinedServers();
+		
 		lastServersStorage = application.getSelectedServersStorage();
 		
 		boolean showDisconnectNotification = false;
@@ -126,9 +119,7 @@ public class ServerSelectActivity extends Activity
 		{
 			application.destroyServerConnection();
 		}
-		
-		View discoveredServersFieldset = findViewById(R.id.discovered_servers_fieldset);
-		discoveredServersFieldset.setVisibility(View.GONE);
+
 		discoveredServersList.removeAllViews();
 		
 		((MultiBoxApplication)getApplication()).requestServerDiscovery(new DiscoveryListener()
@@ -164,9 +155,6 @@ public class ServerSelectActivity extends Activity
 				}
 				
 				createLastServersList(servers);
-				
-				View lastServersFieldset = findViewById(R.id.last_servers_fieldset);
-				lastServersFieldset.setVisibility(View.VISIBLE);
 			}
 			
 			@Override
@@ -204,13 +192,14 @@ public class ServerSelectActivity extends Activity
 		outState.putBoolean(SAVED_STATE_KEY_DISCONNECT_NOTIFICATION, showDisconnectNotification);
 	}
 	
-	private void createDiscoveredServerView(final String serverAddress, final String serverName) {
-		View discoveredServersFieldset = findViewById(R.id.discovered_servers_fieldset);
-		discoveredServersFieldset.setVisibility(View.VISIBLE);
-		
+	private void createServerViewInfo(int iconResource, LinearLayout layout, final String serverAddress, final String serverName, View.OnClickListener listener)
+	{
 		LayoutInflater viewInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		View serverItemView = viewInflater.inflate(R.layout.item_server, null);
+		
+		ImageView iconView = (ImageView)serverItemView.findViewById(R.id.server_icon);
+		iconView.setImageResource(iconResource);
 		
 		TextView serverNameView = (TextView)serverItemView.findViewById(R.id.server_name_view);
 		TextView serverAddressView = (TextView)serverItemView.findViewById(R.id.server_address_view);
@@ -218,16 +207,44 @@ public class ServerSelectActivity extends Activity
 		serverNameView.setText(serverName);
 		serverAddressView.setText(serverAddress);
 		
-		serverItemView.setOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				onServerSelected(serverAddress);
-			}
-		});
+		serverItemView.setOnClickListener(listener);
 		
-		discoveredServersList.addView(serverItemView);
+		layout.addView(serverItemView);
+	}
+	
+	private void createPredefinedServers()
+	{
+		createServerViewInfo(
+				R.drawable.dot_local,
+				predefinedServersList, 
+				"", 
+				"Your device",
+				new View.OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						connectToLocalServer();
+					}
+				}
+		);
+	}
+	
+	private void createDiscoveredServerView(final String serverAddress, final String serverName) {
+		createServerViewInfo(
+				R.drawable.dot_online,
+				discoveredServersList, 
+				serverAddress, 
+				serverName,
+				new View.OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						onServerSelected(serverAddress);
+					}
+				}
+		);
 	}
 	
 	private void createLastServersList(List<ServerEntry> servers)
@@ -236,30 +253,20 @@ public class ServerSelectActivity extends Activity
 		
 		for (final ServerEntry server : servers)
 		{
-			LayoutInflater viewInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			
-			View serverItemView = viewInflater.inflate(R.layout.item_server, null);
-			
-			TextView serverNameView = (TextView)serverItemView.findViewById(R.id.server_name_view);
-			TextView serverAddressView = (TextView)serverItemView.findViewById(R.id.server_address_view);
-			
-			String name = server.getName();
-			serverNameView.setText(name);
-			
-			String address = server.getAddress();
-			serverAddressView.setText(address);
-			
-			serverItemView.setOnClickListener(new View.OnClickListener()
-			{
-				@Override
-				public void onClick(View v)
-				{
-					String address = server.getAddress();
-					onServerSelected(address);
-				}
-			});
-			
-			lastServersList.addView(serverItemView);
+			createServerViewInfo(
+					R.drawable.dot_away,
+					lastServersList, 
+					server.getAddress(), 
+					server.getName(),
+					new View.OnClickListener()
+					{
+						@Override
+						public void onClick(View v)
+						{
+							onServerSelected(server.getAddress());
+						}
+					}
+			);
 		}
 	}
 	

@@ -23,6 +23,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.IBinder;
@@ -47,7 +48,6 @@ public class HostService extends Service
 		private HandlerEventLoop messageQueue = new HandlerEventLoop();
 		private Runnable refreshNotification = new Runnable()
 		{
-			
 			@Override
 			public void run()
 			{
@@ -96,9 +96,9 @@ public class HostService extends Service
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 		builder
-			.setSmallIcon(R.drawable.ic_launcher)
-			.setContentTitle("MultiBox")
-			.setContentIntent(pendingOpenIntent);
+			.setSmallIcon(R.drawable.notification)
+			.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
+			.setContentTitle("MultiBox");
 			
 		if(player.isPlaying())
 		{

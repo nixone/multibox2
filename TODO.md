@@ -1,4 +1,10 @@
-# ToDo List
+# ToDo - Critical
+
+## Small stuff
+
+*	Redo the player state machine
+
+# ToDo - Future
 
 ## Small stuff
 
