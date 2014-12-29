@@ -8,5 +8,6 @@
     <dimen name="touch_view_height">9dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="server_item_background_padding">32dp</dimen>
 
 </resources>

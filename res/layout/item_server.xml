@@ -7,20 +7,16 @@
 	android:paddingBottom="@dimen/vertical_spacing">
 
 	<LinearLayout
+	    android:id="@+id/server_background"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		android:background="@color/fieldset_background_color"
-		android:padding="@dimen/fieldset_padding" >
-    
-		<ImageView
-			android:id="@+id/server_icon"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="0"
-			android:layout_gravity="center"
-			android:layout_marginRight="@dimen/standard_margin"
-			android:src="@drawable/dot_unknown" />
+		android:background="@drawable/server_online"
+		android:paddingLeft="@dimen/server_item_background_padding"
+		android:paddingRight="@dimen/fieldset_padding"
+		android:paddingTop="@dimen/fieldset_padding"
+		android:paddingBottom="@dimen/fieldset_padding"
+		>
 	    
 		<TextView
 			android:id="@+id/server_name_view"

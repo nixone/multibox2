@@ -192,14 +192,16 @@ public class ServerSelectActivity extends Activity
 		outState.putBoolean(SAVED_STATE_KEY_DISCONNECT_NOTIFICATION, showDisconnectNotification);
 	}
 	
-	private void createServerViewInfo(int iconResource, LinearLayout layout, final String serverAddress, final String serverName, View.OnClickListener listener)
+	private void createServerViewInfo(int backgroundResource, LinearLayout layout, final String serverAddress, final String serverName, View.OnClickListener listener)
 	{
 		LayoutInflater viewInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		View serverItemView = viewInflater.inflate(R.layout.item_server, null);
 		
-		ImageView iconView = (ImageView)serverItemView.findViewById(R.id.server_icon);
-		iconView.setImageResource(iconResource);
+		LinearLayout background = (LinearLayout)serverItemView.findViewById(R.id.server_background);
+		int pT = background.getPaddingTop(), pB = background.getPaddingBottom(), pL = background.getPaddingLeft(), pR = background.getPaddingRight();
+		background.setBackgroundResource(backgroundResource);
+		background.setPadding(pL, pT, pR, pB);
 		
 		TextView serverNameView = (TextView)serverItemView.findViewById(R.id.server_name_view);
 		TextView serverAddressView = (TextView)serverItemView.findViewById(R.id.server_address_view);
@@ -215,7 +217,7 @@ public class ServerSelectActivity extends Activity
 	private void createPredefinedServers()
 	{
 		createServerViewInfo(
-				R.drawable.dot_local,
+				R.drawable.server_local,
 				predefinedServersList, 
 				"", 
 				"Your device",
@@ -232,7 +234,7 @@ public class ServerSelectActivity extends Activity
 	
 	private void createDiscoveredServerView(final String serverAddress, final String serverName) {
 		createServerViewInfo(
-				R.drawable.dot_online,
+				R.drawable.server_online,
 				discoveredServersList, 
 				serverAddress, 
 				serverName,
@@ -254,7 +256,7 @@ public class ServerSelectActivity extends Activity
 		for (final ServerEntry server : servers)
 		{
 			createServerViewInfo(
-					R.drawable.dot_away,
+					R.drawable.server_history,
 					lastServersList, 
 					server.getAddress(), 
 					server.getName(),
