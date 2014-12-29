@@ -17,6 +17,9 @@ import sk.hackcraft.multibox.net.host.handlers.GetPlaylistHandler;
 import sk.hackcraft.multibox.net.host.handlers.GetServerInfoHandler;
 import sk.hackcraft.multibox.net.host.handlers.PingHandler;
 import sk.hackcraft.multibox.net.host.handlers.UploadMultimediaHandler;
+import sk.hackcraft.util.Eventable.Listener;
+import sk.hackcraft.util.MessageQueue;
+import sk.hackcraft.util.SimpleEventLoop;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -43,34 +46,13 @@ public class HostService extends Service
 			return HostService.this;
 		}
 	}
-	
-	private class PlayerListener implements Player.Listener {
-		private HandlerEventLoop messageQueue = new HandlerEventLoop();
-		private Runnable refreshNotification = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				refreshNotification();
-			}
-		};
-		
-		@Override
-		public void onSongAdded(Player player, Song song)
-		{
-			messageQueue.post(refreshNotification);
-		}
 
+	private class PlayerChangedListener implements Listener<Player>
+	{
 		@Override
-		public void onSongFinished(Player player, Song song)
+		public void handle(Player data)
 		{
-			messageQueue.post(refreshNotification);
-		}
-
-		@Override
-		public void onSongStarted(Player player, Song song)
-		{
-			messageQueue.post(refreshNotification);
+			refreshNotification();
 		}
 	}
 
@@ -79,48 +61,47 @@ public class HostService extends Service
 	private Host host = null;
 	private Notification notification = null;
 	private WifiManager.WifiLock acquiredWifiLock = null;
-	
+
 	private int nextNotificationActionRequestCode = 1;
-	
+
+	private MessageQueue serviceMessageQueue = new HandlerEventLoop();
+	private MessageQueue backgroundMessageQueue = new SimpleEventLoop();
+
 	private Notification buildNotification()
 	{
 		Intent closeIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_CLOSE);
 		Intent openIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_OPEN);
 		Intent playIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_PLAY);
 		Intent pauseIntent = ControlHostServiceActivity.createIntent(this, ControlHostServiceActivity.ACTION_PAUSE);
-		
+
 		PendingIntent pendingCloseIntent = PendingIntent.getActivity(this, nextNotificationActionRequestCode++, closeIntent, 0);
 		PendingIntent pendingOpenIntent = PendingIntent.getActivity(this, nextNotificationActionRequestCode++, openIntent, 0);
 		PendingIntent pendingPlayIntent = PendingIntent.getActivity(this, nextNotificationActionRequestCode++, playIntent, 0);
 		PendingIntent pendingPauseIntent = PendingIntent.getActivity(this, nextNotificationActionRequestCode++, pauseIntent, 0);
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder
-			.setSmallIcon(R.drawable.notification)
-			.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
-			.setContentTitle("MultiBox");
-			
-		if(player.isPlaying())
+		builder.setSmallIcon(R.drawable.notification).setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
+				.setContentTitle("MultiBox");
+
+		if (player.isPlaying())
 		{
 			Song playingSong = player.getPlayingSong();
-			
-			if(player.getDesiredState() == Player.State.PLAYING)
+
+			if (player.getDesiredState() == Player.State.PLAYING)
 			{
 				builder.setContentText(playingSong.getTitle());
-			}
-			else if(player.getDesiredState() == Player.State.PAUSED)
+			} else if (player.getDesiredState() == Player.State.PAUSED)
 			{
-				builder.setContentText(playingSong.getTitle()+" (paused)");
+				builder.setContentText(playingSong.getTitle() + " (paused)");
 			}
-			
+
 			builder.setProgress(100, 30, true);
-		}
-		else
+		} else
 		{
 			builder.setContentText("Not playing.");
 		}
-		
-		switch(player.getDesiredState())
+
+		switch (player.getDesiredState())
 		{
 			case PLAYING:
 				builder.addAction(R.drawable.pause, "Pause", pendingPauseIntent);
@@ -129,30 +110,29 @@ public class HostService extends Service
 				builder.addAction(R.drawable.play, "Play", pendingPlayIntent);
 				break;
 		}
-		
+
 		builder.addAction(R.drawable.stop, "Close", pendingCloseIntent);
 
 		return builder.build();
 	}
-	
+
 	private void refreshNotification()
 	{
 		Notification buildNotification = buildNotification();
-		
-		if(notification == null)
+
+		if (notification == null)
 		{
 			notification = buildNotification;
 			startForeground(NOTIFICATION_ID, notification);
-		}
-		else
+		} else
 		{
 			notification = buildNotification;
-			
-			NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+
+			NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			manager.notify(NOTIFICATION_ID, notification);
 		}
 	}
-	
+
 	public void start()
 	{
 		if (host != null)
@@ -160,8 +140,8 @@ public class HostService extends Service
 			return;
 		}
 
-		player = new Player();
-		player.addListener(new PlayerListener());
+		player = new Player(backgroundMessageQueue);
+		player.getChangedEvent().addListener(new PlayerChangedListener(), serviceMessageQueue);
 		player.play();
 
 		library = new LibraryView(getContentResolver());
@@ -229,16 +209,16 @@ public class HostService extends Service
 
 	public void play()
 	{
-		if(player != null)
+		if (player != null)
 		{
 			player.play();
 		}
 		refreshNotification();
 	}
-	
+
 	public void pause()
 	{
-		if(player != null)
+		if (player != null)
 		{
 			player.pause();
 		}

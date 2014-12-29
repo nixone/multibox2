@@ -5,4 +5,8 @@
 	<color name="warning_background">#ddff0000</color>
 	<color name="text_inverse">#fff</color>
 	<color name="list_item_pressed_background">#ccc</color>
+	<color name="server_local">#0096ff</color>
+	<color name="server_online">#66ff00</color>
+	<color name="server_away">#ff8a00</color>
+	<color name="server_unknown">#bcbcbc</color>
 </resources>

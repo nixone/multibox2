@@ -19,6 +19,6 @@ public class GetPlaylistHandler extends DuplexJacksonMessageHandler<Empty, GetPl
 	@Override
 	public GetPlaylistResponse handle(Empty request)
 	{
-		return new GetPlaylistResponse(player.getSongs());
+		return new GetPlaylistResponse(player.getPlaylist());
 	}
 }
