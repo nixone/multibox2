@@ -65,7 +65,7 @@ public class HostService extends Service
 	private int nextNotificationActionRequestCode = 1;
 
 	private MessageQueue serviceMessageQueue = new HandlerEventLoop();
-	private MessageQueue backgroundMessageQueue = new SimpleEventLoop();
+	private MessageQueue backgroundMessageQueue = SimpleEventLoop.startInThread();
 
 	private Notification buildNotification()
 	{

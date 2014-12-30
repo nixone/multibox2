@@ -12,11 +12,13 @@ import android.media.MediaPlayer.OnCompletionListener;
 
 public class Player
 {
-	public enum State {
+	public enum State
+	{
 		PLAYING, PAUSED;
 	}
 	
-	private class Playback implements OnCompletionListener {
+	private class Playback implements OnCompletionListener
+	{
 		private Song song;
 		private MediaPlayer mediaPlayer;
 		
