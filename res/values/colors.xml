@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="fieldset_background_color">#fff</color>
+    <color name="activity_background">#333</color>
+    <color name="activity_text">#fff</color>
+	<color name="fieldset_background_color">#ddd</color>
 	<color name="fieldset_activity_background_color">#bbb</color>
 	<color name="warning_background">#ddff0000</color>
 	<color name="text_inverse">#fff</color>
 	<color name="list_item_pressed_background">#ccc</color>
+	<color name="server_background">#fff</color>
+	<color name="server_text">#000</color>
 	<color name="server_local">#0096ff</color>
 	<color name="server_online">#66ff00</color>
 	<color name="server_away">#ff8a00</color>

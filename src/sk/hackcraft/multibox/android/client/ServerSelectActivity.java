@@ -44,8 +44,10 @@ public class ServerSelectActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
+	
 		startService(new Intent(this, HostService.class));
+	
+		setTitle(R.string.select_device);
 		
 		application = (MultiBoxApplication)getApplication();
 
@@ -108,7 +110,6 @@ public class ServerSelectActivity extends Activity
 			}
 		});
 	}
-
 	
 	@Override
 	protected void onResume()
